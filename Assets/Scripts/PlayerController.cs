@@ -9,9 +9,9 @@ public class PlayerController : MonoBehaviour {
 	public int m_lastDirection = 1;
 	public int m_combo = 0;
 	int m_numberOfRays = 5;
-	[HideInInspector] public bool m_onGround = false;
-	[HideInInspector] public bool m_hasControl = true;
-	[HideInInspector] private bool m_canMove = true;
+	public bool m_onGround = false;
+	public bool m_hasControl = true;
+	private bool m_canMove = true;
 
 	//componants
 	BoxCollider2D m_boxCollider;
@@ -28,11 +28,11 @@ public class PlayerController : MonoBehaviour {
 	float dragAmount;
 
 	float moveForce = 0.05f; //how much you can move on the x
-	float gravity = -0.015f; // how much you accelerate down
+	float gravity = -0.015f;// -0.015f; // how much you accelerate down
 	float friction = 0.5f; // ground resistance
 	float airResistance = 0.2f; // air resistance;
 
-	[HideInInspector] public string m_horizontalAxis, m_verticalAxis, m_fireButton; // controls
+	public string m_horizontalAxis, m_verticalAxis, m_fireButton; // controls
 
 	void Awake () {
 		mainCamera = GameObject.FindWithTag("MainCamera");
@@ -74,33 +74,32 @@ public class PlayerController : MonoBehaviour {
 				m_currentAcceleration.x = Input.GetAxisRaw(m_horizontalAxis);
 			else
 				m_currentAcceleration.x = Input.GetAxisRaw(m_horizontalAxis) == 0 ? m_currentAcceleration.x = 0 : Input.GetAxisRaw(m_horizontalAxis) > 0 ? 1 : -1;
-			m_currentAcceleration *= moveForce;
+			m_currentAcceleration.x *= moveForce;
 		} else {
 			m_currentAcceleration.x = 0;
 		}
 
-		//drag TODO!
-		if (m_hasControl) {
-			if (m_onGround)
-				dragAmount = friction;
-			else
-				dragAmount = airResistance;
+		//drag on x
+		if (m_onGround && m_hasControl) { // friction from 'feet in the ground'
+			dragAmount = friction;
 		} else {
-			dragAmount = 0f; // blasting away!
+			dragAmount = airResistance; // blasting away!
 		}
 
-		//apply drag
-		m_currentAcceleration.x += Mathf.Sign(m_currentVelocity.x) * -Mathf.Abs(m_currentVelocity.x * dragAmount);
-
+		//apply drag on x TODO
+		m_currentAcceleration.x += Mathf.Sign(m_currentVelocity.x) * -Mathf.Abs(m_currentVelocity.x) * dragAmount;
+		
 		//gravity
-
 		if (!m_onGround) {
 			m_currentAcceleration.y = gravity;
 		} else {
 			m_currentVelocity.y = 0;
 			m_currentAcceleration.y = 0;
 		}
-		
+
+		//apply drag on y
+//		m_currentAcceleration.y += Mathf.Sign(m_currentVelocity.y) * -Mathf.Abs(m_currentVelocity.x);
+
 		//turn maths to pictures
 		SetPosition ();
 	}
@@ -217,21 +216,26 @@ public class PlayerController : MonoBehaviour {
 	public void Respawn () {
 		m_hasControl = true;
 		m_combo = 0;
+		m_currentVelocity = Vector3.zero;
 		TeleportTo(m_respawnPosition);
+
 	}
 
 	public void Hit () {
-		mainCamera.GetComponent<ScreenShake>().StartScreenShake(0.5f,3);
-		StartCoroutine("Die");
+		StartCoroutine("HitEffects");
 	}
 
-	IEnumerator Die () {
-		m_hasControl = false;
-//		transform.Rotate(new Vector3(0,0,90));
-		m_particleSystem.Play();
-		yield return new WaitForSeconds(0.2f);
-		m_particleSystem.Stop();
-		Respawn();
+	IEnumerator HitEffects () {
+		m_hasControl = false; // no control
+		yield return null; // wait 1 - move a bit
+		yield return null; // wait 2 - move a bit
+		m_canMove = false; // freeze
+		mainCamera.GetComponent<ScreenShake>().StartScreenShake(0.5f,3); // shake
+		yield return new WaitForSeconds(0.2f); // await a bit
+		m_canMove = true; // unfreeze
+		m_particleSystem.Play(); // pretty
+		m_hasControl = false; // return control TODO
+//		Respawn(); EXPERIEMTY DISABLED
 	}
 
 	public void PlaySound (int id) {
@@ -246,7 +250,6 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	public void TeleportTo(Vector3 pos) {
-		m_currentVelocity = Vector3.zero;
 		transform.position = pos;
 	}
 }

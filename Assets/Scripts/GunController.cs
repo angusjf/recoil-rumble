@@ -5,15 +5,15 @@ public class GunController : MonoBehaviour {
 
 	public GameObject bullet;
 	GameObject gameManager;
-
+	GameObject muzzleFlash;
 	public GameObject gun;
 	public GameObject owner;
 
 	int ammo = 3;
+	float maxInaccuracy = 0f;
+	float recoilForce = 0.3f;
 
 	Vector3 shootVector;
-
-	float recoilForce = 0.3f;
 
 	public enum EDir {
 		N, NE, E, SE, S, SW, W, NW
@@ -44,24 +44,34 @@ public class GunController : MonoBehaviour {
 
 
 	void Shoot() {
-		//shoot in that dir
+		//make a bullet
 		GameObject newBullet = Instantiate(bullet,transform.position,Quaternion.identity) as GameObject;
+		//fire in that direction
 		newBullet.GetComponent<BulletController>().direction = shootVector;
+
+		newBullet.GetComponent<BulletController>().direction.
 		//set who it belongs to
 		newBullet.GetComponent<BulletController>().owner = owner;
 
 		//take away ammo
 		ammo --;
+		//effects
+		StartCoroutine("ShootFx");
+	}
+
+	IEnumerator ShootFx () {
 		//recoil
 		gameObject.GetComponent<PlayerController>().AddForce (-shootVector * recoilForce);
 		//screenshake
 		screenShake.StartScreenShake(0.1f,2);
 		//make sound
 		gameObject.GetComponent<PlayerController>().PlaySound(2);
+		//muzzle flash TODO
+		yield return null;
 	}
 
 	public void Reload () {
-		ammo = 3;//TODO
+		ammo = 300000;//TODO
 	}
 
 	void SetShootDir() {
