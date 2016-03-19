@@ -5,12 +5,12 @@ public class GunController : MonoBehaviour {
 
 	public GameObject bullet;
 	GameObject gameManager;
-	GameObject muzzleFlash;
+	public GameObject muzzleFlash;
 	public GameObject gun;
 	public GameObject owner;
 
 	int ammo = 3;
-	float maxInaccuracy = 0f;
+	float maxInaccuracy = 0.05f;
 	float recoilForce = 0.3f;
 
 	Vector3 shootVector;
@@ -26,6 +26,10 @@ public class GunController : MonoBehaviour {
 	void Start () {
 		gameManager = GameObject.Find("Game Manager");
 		screenShake = GameObject.FindWithTag("MainCamera").GetComponent<ScreenShake>();
+
+		muzzleFlash = Instantiate(muzzleFlash, gun.transform.position + new Vector3 (0.26f,0.0333f,0), Quaternion.identity) as GameObject;
+		muzzleFlash.transform.parent = gun.transform;
+		muzzleFlash.SetActive(false);
 	}
 	
 	void Update () {
@@ -45,11 +49,11 @@ public class GunController : MonoBehaviour {
 
 	void Shoot() {
 		//make a bullet
-		GameObject newBullet = Instantiate(bullet,transform.position,Quaternion.identity) as GameObject;
+		GameObject newBullet = Instantiate(bullet,gun.transform.position,Quaternion.identity) as GameObject;
 		//fire in that direction
 		newBullet.GetComponent<BulletController>().direction = shootVector;
-
-		newBullet.GetComponent<BulletController>().direction.
+		//lil bit of spin
+		newBullet.GetComponent<BulletController>().direction += new Vector3(Random.Range(-maxInaccuracy, maxInaccuracy),Random.Range(-maxInaccuracy, maxInaccuracy),0);
 		//set who it belongs to
 		newBullet.GetComponent<BulletController>().owner = owner;
 
@@ -66,8 +70,19 @@ public class GunController : MonoBehaviour {
 		screenShake.StartScreenShake(0.1f,2);
 		//make sound
 		gameObject.GetComponent<PlayerController>().PlaySound(2);
-		//muzzle flash TODO
+		//muzzle flash on
+		muzzleFlash.SetActive(true);
+		//recoil out
+		Vector3 o = gun.transform.localPosition;
+		gun.transform.position += -shootVector * recoilForce * 0.5f;
 		yield return null;
+		yield return null;
+		//muzzle flash off
+		muzzleFlash.SetActive(false);
+		//recoil back
+		yield return null;
+		yield return null;
+		gun.transform.localPosition = o;
 	}
 
 	public void Reload () {

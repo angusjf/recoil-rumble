@@ -64,9 +64,9 @@ public class GameManagerScript : MonoBehaviour {
 			ResetGame();
 		}
 		
-		if (playerOne.transform.position.y < -50f && playerOne.GetComponent<PlayerController>().m_hasControl){
+		if (playerOne.transform.position.y < -50f) {// && playerOne.GetComponent<PlayerController>().m_hasControl){
 			playerOne.GetComponent<PlayerController>().Respawn();
-		} else if (playerTwo.transform.position.y < -50f && playerTwo.GetComponent<PlayerController>().m_hasControl) {
+		} else if (playerTwo.transform.position.y < -50f) {// && playerTwo.GetComponent<PlayerController>().m_hasControl) {
 			playerTwo.GetComponent<PlayerController>().Respawn();
 		}
 	}
@@ -97,7 +97,6 @@ public class GameManagerScript : MonoBehaviour {
 			playerOne = Instantiate(player) as GameObject;
 			playerOne.GetComponent<PlayerController>().m_playerNumber = 1;
 			playerOne.GetComponent<PlayerController>().m_startingPosition = new Vector3 (xPos * 0.5f, -yPos * 0.5f, 0) + offset;
-			print(playerOne.GetComponent<PlayerController>().m_startingPosition);
 		} else if (blockType == 2) {
 			playerTwo = Instantiate(player) as GameObject;
 			playerTwo.GetComponent<PlayerController>().m_playerNumber = 2;

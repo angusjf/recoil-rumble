@@ -3,15 +3,14 @@ using System.Collections;
 
 public class PlayerController : MonoBehaviour {
 
-	public int m_playerNumber;
+	[System.NonSerialized] public int m_playerNumber;
 	private bool m_analogControls = false;
-
-	public int m_lastDirection = 1;
-	public int m_combo = 0;
+	[System.NonSerialized] public int m_lastDirection = 1;
+	[System.NonSerialized] public int m_lives = 3;
 	int m_numberOfRays = 5;
-	public bool m_onGround = false;
-	public bool m_hasControl = true;
-	private bool m_canMove = true;
+	[System.NonSerialized] public bool m_onGround = false;
+	[System.NonSerialized] public bool m_hasControl = true;
+	[System.NonSerialized] private bool m_canMove = true;
 
 	//componants
 	BoxCollider2D m_boxCollider;
@@ -19,10 +18,10 @@ public class PlayerController : MonoBehaviour {
 	ParticleSystem m_particleSystem;
 	SpriteRenderer m_spriteRenderer;
 	GameObject mainCamera;
-	public int m_solid = 256;
+	[System.NonSerialized] public int m_solid = 256;
 	public AudioClip[] m_soundEffects;
 
-	public Vector3 m_startingPosition, m_respawnPosition; //position vectors
+	[System.NonSerialized] public Vector3 m_startingPosition, m_respawnPosition; //position vectors
 
 	Vector3 m_currentVelocity, m_terminalVelocity, m_currentAcceleration; //movement vectors
 	float dragAmount;
@@ -32,7 +31,7 @@ public class PlayerController : MonoBehaviour {
 	float friction = 0.5f; // ground resistance
 	float airResistance = 0.2f; // air resistance;
 
-	public string m_horizontalAxis, m_verticalAxis, m_fireButton; // controls
+	[System.NonSerialized] public string m_horizontalAxis, m_verticalAxis, m_fireButton; // controls
 
 	void Awake () {
 		mainCamera = GameObject.FindWithTag("MainCamera");
@@ -215,7 +214,7 @@ public class PlayerController : MonoBehaviour {
 
 	public void Respawn () {
 		m_hasControl = true;
-		m_combo = 0;
+		m_lives --;
 		m_currentVelocity = Vector3.zero;
 		TeleportTo(m_respawnPosition);
 
@@ -231,10 +230,10 @@ public class PlayerController : MonoBehaviour {
 		yield return null; // wait 2 - move a bit
 		m_canMove = false; // freeze
 		mainCamera.GetComponent<ScreenShake>().StartScreenShake(0.5f,3); // shake
-		yield return new WaitForSeconds(0.2f); // await a bit
+		yield return new WaitForSeconds(0.14f); // await a bit
 		m_canMove = true; // unfreeze
 		m_particleSystem.Play(); // pretty
-		m_hasControl = false; // return control TODO
+		m_hasControl = true; // return control TODO
 //		Respawn(); EXPERIEMTY DISABLED
 	}
 

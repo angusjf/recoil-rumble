@@ -4,18 +4,19 @@ using UnityEngine.UI;
 
 public class UiController : MonoBehaviour {
 
-//	public Text t;
-//	GameObject player;
-//
-//	void Start () {
-//		print(name.Substring(1,1));
-//		player = GameObject.FindWithTag(name.Substring(1,1));
-//	}
-//	
-//	void Update () {
-//		if (player.GetComponent<PlayerController>().m_combo > 0)
-//			t.text = "x" + player.GetComponent<PlayerController>().m_combo.ToString();
-//		else
-//			t.text = "";
-//	}
+	Text score1, score2;
+	GameObject player1, player2;
+
+	void Start () {
+		score1 = GameObject.Find("Player One Combo Text").GetComponent<Text>();
+		score2 = GameObject.Find("Player Two Combo Text").GetComponent<Text>();
+
+		player1 = GameObject.FindWithTag("Player 1");
+		player2 = GameObject.FindWithTag("Player 2");
+	}
+	
+	void Update () {
+		score1.text = player1.GetComponent<PlayerController>().m_lives.ToString();
+		score2.text = player2.GetComponent<PlayerController>().m_lives.ToString();
+	}
 }

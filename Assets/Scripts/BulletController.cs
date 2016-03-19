@@ -17,7 +17,10 @@ public class BulletController : MonoBehaviour {
 		v = direction * speed;
 		a = Vector3.zero;
 
-		Destroy(gameObject,10f);
+		Destroy(gameObject,2f);
+
+		float r = Mathf.Atan2(direction.y,direction.x) * Mathf.Rad2Deg; 
+		transform.rotation = Quaternion.Euler(new Vector3(0,0,r));;
 	}
 	
 	void FixedUpdate () {
@@ -32,7 +35,7 @@ public class BulletController : MonoBehaviour {
 		} else if (other.gameObject != owner && other.gameObject.tag.Contains("Player")) {
 			other.gameObject.GetComponent<PlayerController>().Hit(); // do damage
 			other.GetComponent<PlayerController>().AddForce(direction * hitForce); // bullet hit back
-			owner.GetComponent<PlayerController>().m_combo ++; // increase combo
+//			owner.GetComponent<PlayerController>().m_lives ++; // increase combo
 			owner.GetComponent<PlayerController>().PlaySound(3); // hit sound? TODO move to bullet
 			Destroy(gameObject, 0f); //delete bullet
 		}
