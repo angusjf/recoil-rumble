@@ -23,7 +23,7 @@ public class PlayerController : MonoBehaviour {
 
 	[System.NonSerialized] public Vector3 m_startingPosition, m_respawnPosition; //position vectors
 
-	Vector3 m_currentVelocity, m_terminalVelocity, m_currentAcceleration; //movement vectors
+	public Vector3 m_currentVelocity, m_terminalVelocity, m_currentAcceleration; //movement vectors
 	float dragAmount;
 
 	float moveForce = 0.05f; //how much you can move on the x
@@ -40,7 +40,7 @@ public class PlayerController : MonoBehaviour {
 		m_particleSystem = GetComponent<ParticleSystem>();
 		m_spriteRenderer = GetComponent<SpriteRenderer>();
 		m_currentVelocity = Vector3.zero;
-		m_terminalVelocity = new Vector3(1000,-1000,0);
+		m_terminalVelocity = new Vector3(1000,1000,0);
 		m_currentAcceleration = Vector3.zero;
 		tag = "Player " + m_playerNumber;
 		m_horizontalAxis = "Horizontal" + m_playerNumber;
@@ -79,14 +79,14 @@ public class PlayerController : MonoBehaviour {
 		}
 
 		//drag on x
-		if (m_onGround && m_hasControl) { // friction from 'feet in the ground'
+		if (m_onGround) { // friction from 'feet in the ground'
 			dragAmount = friction;
-		} else {
-			dragAmount = airResistance; // blasting away!
+		} else { // in the sky
+			dragAmount = airResistance;
 		}
 
-		//apply drag on x TODO
-		m_currentAcceleration.x += Mathf.Sign(m_currentVelocity.x) * -Mathf.Abs(m_currentVelocity.x) * dragAmount;
+		//apply drag on x only if in control TODO?
+		m_currentAcceleration.x = m_hasControl ? m_currentAcceleration.x + Mathf.Sign(m_currentVelocity.x) * -Mathf.Abs(m_currentVelocity.x) * dragAmount : 0;
 		
 		//gravity
 		if (!m_onGround) {
@@ -189,6 +189,9 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void SetPosition () {
+		//clamp velocity to terminal
+		if (Mathf.Abs(m_currentVelocity.y) > Mathf.Abs(m_terminalVelocity.y)) { print (Mathf.Abs(m_currentVelocity.y) + " > " + Mathf.Abs(m_terminalVelocity.y));
+			m_currentVelocity.y = Mathf.Sign(m_currentVelocity.y) * m_terminalVelocity.y; print (" setting vel to" + Mathf.Sign(m_currentVelocity.y) * m_terminalVelocity.y);}
 		// v += a
 		m_currentVelocity += m_currentAcceleration;
 		// v = s [without collisions]
@@ -226,15 +229,25 @@ public class PlayerController : MonoBehaviour {
 
 	IEnumerator HitEffects () {
 		m_hasControl = false; // no control
+
 		yield return null; // wait 1 - move a bit
-		yield return null; // wait 2 - move a bit
+
 		m_canMove = false; // freeze
+
 		mainCamera.GetComponent<ScreenShake>().StartScreenShake(0.5f,3); // shake
-		yield return new WaitForSeconds(0.14f); // await a bit
+
+		yield return new WaitForSeconds(0.12f); // wait a bit
+
 		m_canMove = true; // unfreeze
+
 		m_particleSystem.Play(); // pretty
-		m_hasControl = true; // return control TODO
-//		Respawn(); EXPERIEMTY DISABLED
+
+		m_hasControl = false; // return control TODO
+
+
+		// EXPERIMENTAL
+		yield return new WaitForSeconds(0.33f);
+		Respawn(); 
 	}
 
 	public void PlaySound (int id) {

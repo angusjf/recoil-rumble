@@ -16,7 +16,7 @@ public class UiController : MonoBehaviour {
 	}
 	
 	void Update () {
-		score1.text = player1.GetComponent<PlayerController>().m_lives.ToString();
-		score2.text = player2.GetComponent<PlayerController>().m_lives.ToString();
+		score1.text = (player1.GetComponent<PlayerController>().m_currentVelocity.y.ToString());
+		score2.text = (player2.GetComponent<PlayerController>().m_currentVelocity.y.ToString());
 	}
 }
