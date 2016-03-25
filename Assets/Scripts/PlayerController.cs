@@ -3,51 +3,54 @@ using System.Collections;
 
 public class PlayerController : MonoBehaviour {
 
-	//componants
+	//Componants
+	GameObject mainCamera;
 	BoxCollider2D m_boxCollider;
 	AudioSource m_audioSource;
 	ParticleSystem m_particleSystem;
 	SpriteRenderer m_spriteRenderer;
-	GameObject mainCamera;
-	//assets
+	//Assets
 	public AudioClip[] m_soundEffects;
 	public Sprite[] m_sprites;
+	public GameObject m_gunPrefab;
 
-
-	//current state (rules)
+	//Current state (rules)
 	public int m_lastDirection = 1;
 	public int m_score = 0;
 	public bool m_onGround = false;
 	public bool m_hasControl = true;
 	public bool m_isAlive = true;
 	private bool m_canMove = true;
-	//current state (physics)
-	float dragAmount;
-	float moveForce = 0.05f; //how much you can move on the x
-	float gravity = -0.015f;// -0.015f; // how much you accelerate down
-	float friction = 0.5f; // ground resistance
-	float airResistance = 0.2f; // air resistance;
+	//Current state (physics)
+	float m_dragAmount;
+	float m_moveForce = 0.05f; //how much you can move on the x
+	float m_gravity = -0.015f;// -0.015f; // how much you accelerate down
+	float m_friction = 0.5f; // ground resistance
+	float m_airResistance = 0.2f; // air resistance;
 	public Vector3 m_currentVelocity, m_terminalVelocity, m_currentAcceleration; //movement vectors
 
-	//kinda constant
+	//Kinda constant
 	int m_numberOfRays = 5;
 	int m_solid = 256;
-	//based on player number
+	//Based on player number / settings
 	public int m_playerNumber;
 	public Color m_playerColor;
 	private bool m_analogControls = false;
 	public Vector3 m_startingPosition, m_respawnPosition; //position vectors
 	public string m_horizontalAxis, m_verticalAxis, m_fireButton; // controls
+	public GameObject m_playerGun;
 
 	void Awake () {
+		//Componant / GameObject references
 		mainCamera = GameObject.FindWithTag("MainCamera");
 		m_boxCollider = GetComponent<BoxCollider2D>();
 		m_audioSource = GetComponent<AudioSource>();
 		m_particleSystem = GetComponent<ParticleSystem>();
 		m_spriteRenderer = GetComponent<SpriteRenderer>();
-		m_currentVelocity = Vector3.zero;
-		m_terminalVelocity = new Vector3(1000,1000,0);
-		m_currentAcceleration = Vector3.zero;
+	}
+
+	void Start () {
+		//Player Setup (rules)
 		tag = "Player" + m_playerNumber;
 		m_horizontalAxis = "Horizontal" + m_playerNumber;
 		m_verticalAxis = "Vertical" + m_playerNumber;
@@ -55,10 +58,14 @@ public class PlayerController : MonoBehaviour {
 		m_playerColor = m_playerNumber == 1 ? new Color(0.97f,0.27f,0.30f) : new Color(0.40f,0.84f,0.31f);
 		m_spriteRenderer.color = m_playerColor;
 		m_particleSystem.startColor = m_playerColor;
-	}
-
-	void Start () {
+		//Player Setup (physics)
+		m_currentVelocity = Vector3.zero;
+		m_terminalVelocity = new Vector3(1000,1000,0);
+		m_currentAcceleration = Vector3.zero;
 		transform.position = m_startingPosition;
+		//Gun Setup
+		m_playerGun = Instantiate(m_gunPrefab) as GameObject;
+		m_playerGun.GetComponent<GunController>().owner = gameObject;
 	}
 	
 	void FixedUpdate () {
@@ -79,24 +86,24 @@ public class PlayerController : MonoBehaviour {
 				m_currentAcceleration.x = Input.GetAxisRaw(m_horizontalAxis);
 			else
 				m_currentAcceleration.x = Input.GetAxisRaw(m_horizontalAxis) == 0 ? m_currentAcceleration.x = 0 : Input.GetAxisRaw(m_horizontalAxis) > 0 ? 1 : -1;
-			m_currentAcceleration.x *= moveForce;
+			m_currentAcceleration.x *= m_moveForce;
 		} else {
 			m_currentAcceleration.x = 0;
 		}
 
 		//drag on x
 		if (m_onGround) { // friction from 'feet in the ground'
-			dragAmount = friction;
+			m_dragAmount = m_friction;
 		} else { // in the sky
-			dragAmount = airResistance;
+			m_dragAmount = m_airResistance;
 		}
 
 		//apply drag on x only if in control TODO?
-		m_currentAcceleration.x = m_hasControl ? m_currentAcceleration.x + Mathf.Sign(m_currentVelocity.x) * -Mathf.Abs(m_currentVelocity.x) * dragAmount : 0; // TODO
+		m_currentAcceleration.x = m_hasControl ? m_currentAcceleration.x + Mathf.Sign(m_currentVelocity.x) * -Mathf.Abs(m_currentVelocity.x) * m_dragAmount : 0; // TODO
 		
 		//gravity
 		if (!m_onGround) {
-			m_currentAcceleration.y = gravity;
+			m_currentAcceleration.y = m_gravity;
 		} else {
 			m_currentVelocity.y = 0;
 			m_currentAcceleration.y = 0;
@@ -225,6 +232,7 @@ public class PlayerController : MonoBehaviour {
 		if (GameManagerScript.gameOver == false) {
 			m_hasControl = true;
 			m_isAlive = true;
+			m_canMove = true;
 			if (m_score > 0) m_score --;
 			m_currentVelocity = Vector3.zero;
 			TeleportTo(m_respawnPosition);

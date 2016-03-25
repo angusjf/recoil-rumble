@@ -7,7 +7,7 @@ public class SuperRayDraw : MonoBehaviour {
 
 	void Start () {
 		lastPos = transform.position;
-//		InvokeRepeating("DrawRay", 0.1f,0.1f);
+		InvokeRepeating("DrawRay", 0.03f,0.03f);
 	}
 	
 	void DrawRay () {
