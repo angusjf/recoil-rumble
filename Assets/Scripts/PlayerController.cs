@@ -3,35 +3,41 @@ using System.Collections;
 
 public class PlayerController : MonoBehaviour {
 
-	[System.NonSerialized] public int m_playerNumber;
-	private bool m_analogControls = false;
-	[System.NonSerialized] public int m_lastDirection = 1;
-	[System.NonSerialized] public int m_lives = 3;
-	int m_numberOfRays = 5;
-	[System.NonSerialized] public bool m_onGround = false;
-	[System.NonSerialized] public bool m_hasControl = true;
-	[System.NonSerialized] private bool m_canMove = true;
-
 	//componants
 	BoxCollider2D m_boxCollider;
 	AudioSource m_audioSource;
 	ParticleSystem m_particleSystem;
 	SpriteRenderer m_spriteRenderer;
 	GameObject mainCamera;
-	[System.NonSerialized] public int m_solid = 256;
+	//assets
 	public AudioClip[] m_soundEffects;
+	public Sprite[] m_sprites;
 
-	[System.NonSerialized] public Vector3 m_startingPosition, m_respawnPosition; //position vectors
 
-	public Vector3 m_currentVelocity, m_terminalVelocity, m_currentAcceleration; //movement vectors
+	//current state (rules)
+	public int m_lastDirection = 1;
+	public int m_score = 0;
+	public bool m_onGround = false;
+	public bool m_hasControl = true;
+	public bool m_isAlive = true;
+	private bool m_canMove = true;
+	//current state (physics)
 	float dragAmount;
-
 	float moveForce = 0.05f; //how much you can move on the x
 	float gravity = -0.015f;// -0.015f; // how much you accelerate down
 	float friction = 0.5f; // ground resistance
 	float airResistance = 0.2f; // air resistance;
+	public Vector3 m_currentVelocity, m_terminalVelocity, m_currentAcceleration; //movement vectors
 
-	[System.NonSerialized] public string m_horizontalAxis, m_verticalAxis, m_fireButton; // controls
+	//kinda constant
+	int m_numberOfRays = 5;
+	int m_solid = 256;
+	//based on player number
+	public int m_playerNumber;
+	public Color m_playerColor;
+	private bool m_analogControls = false;
+	public Vector3 m_startingPosition, m_respawnPosition; //position vectors
+	public string m_horizontalAxis, m_verticalAxis, m_fireButton; // controls
 
 	void Awake () {
 		mainCamera = GameObject.FindWithTag("MainCamera");
@@ -42,13 +48,13 @@ public class PlayerController : MonoBehaviour {
 		m_currentVelocity = Vector3.zero;
 		m_terminalVelocity = new Vector3(1000,1000,0);
 		m_currentAcceleration = Vector3.zero;
-		tag = "Player " + m_playerNumber;
+		tag = "Player" + m_playerNumber;
 		m_horizontalAxis = "Horizontal" + m_playerNumber;
 		m_verticalAxis = "Vertical" + m_playerNumber;
 		m_fireButton = "Fire" + m_playerNumber;
-		m_spriteRenderer.color = m_playerNumber == 1 ? new Color(0.97f,0.27f,0.30f) : new Color(0.40f,0.84f,0.31f);
-		m_particleSystem.startColor = GetComponent<SpriteRenderer>().color;
-		m_respawnPosition = m_playerNumber == 1 ? new Vector3 (-5,4,0) : new Vector3 (5.5f,4,0);
+		m_playerColor = m_playerNumber == 1 ? new Color(0.97f,0.27f,0.30f) : new Color(0.40f,0.84f,0.31f);
+		m_spriteRenderer.color = m_playerColor;
+		m_particleSystem.startColor = m_playerColor;
 	}
 
 	void Start () {
@@ -86,7 +92,7 @@ public class PlayerController : MonoBehaviour {
 		}
 
 		//apply drag on x only if in control TODO?
-		m_currentAcceleration.x = m_hasControl ? m_currentAcceleration.x + Mathf.Sign(m_currentVelocity.x) * -Mathf.Abs(m_currentVelocity.x) * dragAmount : 0;
+		m_currentAcceleration.x = m_hasControl ? m_currentAcceleration.x + Mathf.Sign(m_currentVelocity.x) * -Mathf.Abs(m_currentVelocity.x) * dragAmount : 0; // TODO
 		
 		//gravity
 		if (!m_onGround) {
@@ -96,7 +102,7 @@ public class PlayerController : MonoBehaviour {
 			m_currentAcceleration.y = 0;
 		}
 
-		//apply drag on y
+		//apply drag on y NOT NEEDED
 //		m_currentAcceleration.y += Mathf.Sign(m_currentVelocity.y) * -Mathf.Abs(m_currentVelocity.x);
 
 		//turn maths to pictures
@@ -108,7 +114,7 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	bool IsOnGround () {
-		bool r = Mathf.Abs(DistanceToSolid(false)) < 0.01f && (bool)Physics2D.Raycast(transform.position,Vector3.down,m_boxCollider.size.y, m_solid); // TODO iffy
+		bool r = Mathf.Abs(DistanceToSolid(false)) < 0.01f && (bool)Physics2D.Raycast(transform.position,Vector3.down,m_boxCollider.size.y, m_solid); // HACK
 		if (r && !m_onGround) {
 			PlaySound(1);
 		}
@@ -206,7 +212,7 @@ public class PlayerController : MonoBehaviour {
 		// y collisions
 		if ((m_currentVelocity.y > 0 && m_currentVelocity.y > DistanceToSolid(false)) || (m_currentVelocity.y < 0 && m_currentVelocity.y < DistanceToSolid(false))) {
 			displacement.y = DistanceToSolid(false);
-			m_currentVelocity.y = 0; // TODO experimental
+			m_currentVelocity.y = 0; // HACK experimental
 		} else {
 			displacement.y = m_currentVelocity.y; //remove block
 		}
@@ -216,11 +222,15 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	public void Respawn () {
-		m_hasControl = true;
-		m_lives --;
-		m_currentVelocity = Vector3.zero;
-		TeleportTo(m_respawnPosition);
-
+		if (GameManagerScript.gameOver == false) {
+			m_hasControl = true;
+			m_isAlive = true;
+			if (m_score > 0) m_score --;
+			m_currentVelocity = Vector3.zero;
+			TeleportTo(m_respawnPosition);
+			//TODO meybe respawn effects?
+			SetSprite(0);
+		}
 	}
 
 	public void Hit () {
@@ -229,30 +239,32 @@ public class PlayerController : MonoBehaviour {
 
 	IEnumerator HitEffects () {
 		m_hasControl = false; // no control
+		m_isAlive = false;
+		SetSprite(1);
 
 		yield return null; // wait 1 - move a bit
 
 		m_canMove = false; // freeze
-
-		mainCamera.GetComponent<ScreenShake>().StartScreenShake(0.5f,3); // shake
+		mainCamera.GetComponent<ScreenShake>().StartScreenShake(1.4f,3); // shake
 
 		yield return new WaitForSeconds(0.12f); // wait a bit
 
 		m_canMove = true; // unfreeze
-
+		//m_hasControl = true; // return control maybe? TODO
 		m_particleSystem.Play(); // pretty
 
-		m_hasControl = false; // return control TODO
-
-
-		// EXPERIMENTAL
 		yield return new WaitForSeconds(0.33f);
-		Respawn(); 
+
+		SetSprite(2);
+		Invoke("Respawn", 1f);
 	}
 
 	public void PlaySound (int id) {
-		m_audioSource.clip = m_soundEffects[id];
-		m_audioSource.Play();
+		m_audioSource.PlayOneShot(m_soundEffects[id]);
+	}
+
+	public void SetSprite (int id) {
+		m_spriteRenderer.sprite = m_sprites[id];
 	}
 
 	void OnTriggerEnter2D (Collider2D other) {
@@ -261,7 +273,13 @@ public class PlayerController : MonoBehaviour {
 		}
 	}
 
-	public void TeleportTo(Vector3 pos) {
+	public void TeleportTo (Vector3 pos) {
 		transform.position = pos;
+	}
+
+	void OnCollisionEnter2D (Collision2D other) {
+		if (!m_isAlive && other.gameObject.tag == "Solid") {
+			m_currentVelocity.x = 0;
+		}
 	}
 }

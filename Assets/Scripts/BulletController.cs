@@ -33,11 +33,28 @@ public class BulletController : MonoBehaviour {
 			Destroy(gameObject, 0f); //delete bullet
 			speed = 0f; // ?
 		} else if (other.gameObject != owner && other.gameObject.tag.Contains("Player")) {
-			other.gameObject.GetComponent<PlayerController>().Hit(); // do damage
-			other.GetComponent<PlayerController>().AddForce(direction * hitForce); // bullet hit back
-//			owner.GetComponent<PlayerController>().m_lives ++; // increase combo
-			owner.GetComponent<PlayerController>().PlaySound(3); // hit sound? TODO move to bullet
-			Destroy(gameObject, 0f); //delete bullet
+
+			// only do this if its not already dead
+			if (other.gameObject.GetComponent<PlayerController>().m_isAlive) {
+				// do damage / fx
+				other.gameObject.GetComponent<PlayerController>().Hit();
+
+				// increase score / fx
+				owner.GetComponent<PlayerController>().m_score ++;
+				owner.GetComponent<PlayerHudDisplayer>().StartCoroutine("BounceScore");
+			}
+
+			// bullet hit back
+			if (other.GetComponent<PlayerController>().m_onGround && direction.y < 0) {
+				direction.y = -direction.y;
+			}
+			other.GetComponent<PlayerController>().AddForce(direction * hitForce);
+
+			// hit sound? HACK - TODO move to bullet
+			owner.GetComponent<PlayerController>().PlaySound(3);
+
+			//delete bullet
+			Destroy(gameObject, 0f);
 		}
 	}
 }

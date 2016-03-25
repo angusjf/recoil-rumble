@@ -150,7 +150,7 @@ public class GunController : MonoBehaviour {
 	}
 
 	void SetRotation() {
-		Vector3 angle = new Vector3(0,0,0);
+		Vector3 angle = Vector3.zero;
 
 		switch (shootDir) {
 			case EDir.N:
@@ -183,7 +183,7 @@ public class GunController : MonoBehaviour {
 				break;
 		}
 
-		gun.transform.localRotation = Quaternion.Euler(angle);
+		gun.transform.localRotation = Quaternion.Lerp(gun.transform.localRotation, Quaternion.Euler(angle), 0.5f);
 
 		gun.GetComponent<SpriteRenderer>().flipY = (angle.z < 270 && angle.z > 90);
 
