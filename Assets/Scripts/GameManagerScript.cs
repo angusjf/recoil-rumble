@@ -86,12 +86,12 @@ public class GameManagerScript : MonoBehaviour {
 	
 	public void StartGame () {
 		//clean up old game
-		if (playerOneWins != 0 && playerTwoWins != 0) {
+		if (playerOneWins != 0 || playerTwoWins != 0) {
 			Destroy(playerOne.GetComponent<PlayerController>().m_playerGun);
 			Destroy(playerTwo.GetComponent<PlayerController>().m_playerGun);
 			Destroy(playerOne);
 			Destroy(playerTwo);
-		}
+		} else {print ("skupping");}
 
 		//make a new one
 		GenerateLevel();
@@ -140,8 +140,8 @@ public class GameManagerScript : MonoBehaviour {
 		gameOver = true;
 		gameStarted = false;
 		lastWinner = winner.tag;
-		if (lastWinner == "Player1") playerOneWins ++;
-		else if (lastWinner == "Player2") playerTwoWins ++;
+		if (winner == playerOne) playerOneWins ++;
+		else if (winner == playerTwo) playerTwoWins ++;
 		menu.ShowMenu();
 	}
 }
