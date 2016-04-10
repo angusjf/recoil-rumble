@@ -3,43 +3,53 @@ using System.Collections;
 
 public class PlayerController : MonoBehaviour {
 
-	//Componants
+	#region varaibles - Componants
 	GameObject mainCamera;
 	BoxCollider2D m_boxCollider;
 	AudioSource m_audioSource;
 	ParticleSystem m_particleSystem;
 	SpriteRenderer m_spriteRenderer;
-	//Assets
+	#endregion
+
+	#region varaibles - Assets
 	public AudioClip[] m_soundEffects;
 	public Sprite[] m_sprites;
 	public GameObject m_gunPrefab;
+	#endregion
 
-	//Current state (rules)
+	#region varaibles - Current state (rules)
 	public int m_lastDirection = 1;
 	public int m_score = 0;
 	public bool m_onGround = false;
 	public bool m_hasControl = true;
 	public bool m_isAlive = true;
 	private bool m_canMove = true;
-	//Current state (physics)
+	#endregion
+
+	#region varaibles - Current state (physics)
 	float m_dragAmount;
 	float m_moveForce = 0.05f; //how much you can move on the x
 	float m_gravity = -0.015f;// -0.015f; // how much you accelerate down
 	float m_friction = 0.5f; // ground resistance
 	float m_airResistance = 0.2f; // air resistance;
 	public Vector3 m_currentVelocity, m_terminalVelocity, m_currentAcceleration; //movement vectors
+	#endregion
 
-	//Kinda constant
+	#region varaibles - constants
 	int m_numberOfRays = 5;
 	int m_solid = 256;
-	//Based on player number / settings
+	#endregion
+
+	#region varaibles - Based on player number / settings
 	public int m_playerNumber;
 	public Color m_playerColor;
 	private bool m_analogControls = false;
 	public Vector3 m_startingPosition, m_respawnPosition; //position vectors
 	public string m_horizontalAxis, m_verticalAxis, m_fireButton; // controls
 	public GameObject m_playerGun;
+	#endregion
 
+	#region setup methods
 	void Awake () {
 		//Componant / GameObject references
 		mainCamera = GameObject.FindWithTag("MainCamera");
@@ -67,7 +77,9 @@ public class PlayerController : MonoBehaviour {
 		m_playerGun = Instantiate(m_gunPrefab) as GameObject;
 		m_playerGun.GetComponent<GunController>().owner = gameObject;
 	}
-	
+	#endregion
+
+	#region MonoBehaviour methods
 	void FixedUpdate () {
 		//see if you are on the ground 
 		m_onGround = IsOnGround();
@@ -78,7 +90,9 @@ public class PlayerController : MonoBehaviour {
 		//set scale
 		m_spriteRenderer.flipX = (m_lastDirection == -1);
 	}
+	#endregion
 
+	#region Methods
 	void Move () {
 		// controls => movement
 		if (m_hasControl) {
@@ -253,7 +267,7 @@ public class PlayerController : MonoBehaviour {
 		yield return null; // wait 1 - move a bit
 
 		m_canMove = false; // freeze
-		mainCamera.GetComponent<ScreenShake>().StartScreenShake(1.4f,3); // shake
+		mainCamera.GetComponent<CameraController>().StartScreenShake(1.4f,3); // shake
 
 		yield return new WaitForSeconds(0.12f); // wait a bit
 
@@ -272,7 +286,7 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	public void SetSprite (int id) {
-		m_spriteRenderer.sprite = m_sprites[id];
+//		m_meshRenderer.sprite = m_sprites[id];
 	}
 
 	void OnTriggerEnter2D (Collider2D other) {
@@ -290,4 +304,5 @@ public class PlayerController : MonoBehaviour {
 			m_currentVelocity.x = 0;
 		}
 	}
+	#endregion
 }

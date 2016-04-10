@@ -6,7 +6,7 @@ public class GameManagerScript : MonoBehaviour {
 
 	//game state
 	public static bool gameStarted, gameOver;
-	public const int winScore = 2;
+	public const int winScore = 1;
 	public static string lastWinner;
 	public static int playerOneWins = 0, playerTwoWins = 0;
 
@@ -63,9 +63,7 @@ public class GameManagerScript : MonoBehaviour {
 	}
 
 	void Update () {
-		if (gameStarted) { //TODO remove
-			if (Input.GetKeyDown(KeyCode.R)) GameOver(playerOne);
-
+		if (gameStarted && !gameOver) { //TODO remove
 			if (playerOne.GetComponent<PlayerController>().m_score >= winScore) {
 				GameOver(playerOne);
 			}
@@ -75,9 +73,9 @@ public class GameManagerScript : MonoBehaviour {
 
 			if (Input.GetKeyDown(KeyCode.M)) ToggleMuted();
 			
-			if (playerOne.transform.position.y < -50f) {// && playerOne.GetComponent<PlayerController>().m_hasControl){
+			if (playerOne.transform.position.y < -50f) {
 				playerOne.GetComponent<PlayerController>().Respawn();
-			} else if (playerTwo.transform.position.y < -50f) {// && playerTwo.GetComponent<PlayerController>().m_hasControl) {
+			} else if (playerTwo.transform.position.y < -50f) {
 				playerTwo.GetComponent<PlayerController>().Respawn();
 			}
 		}
@@ -87,14 +85,37 @@ public class GameManagerScript : MonoBehaviour {
 	public void StartGame () {
 		//clean up old game
 		if (playerOneWins != 0 || playerTwoWins != 0) {
+			//another game
 			Destroy(playerOne.GetComponent<PlayerController>().m_playerGun);
 			Destroy(playerTwo.GetComponent<PlayerController>().m_playerGun);
 			Destroy(playerOne);
 			Destroy(playerTwo);
-		} else {print ("skupping");}
+
+
+			int a = 0;
+//			FindBlock:
+//				GameObject block = GameObject.FindWithTag("Solid");
+//				if (block != null) {
+//					Destroy(block);
+//					print("destroyed " + block.name);
+//					i++;
+//					if (i < 100) {
+//						goto FindBlock;
+//					}
+//				}
+			for (int i = 0; i < 100; i ++) {
+				if (GameObject.Find("Floor (Copy)") != null) {
+					Destroy(GameObject.Find("Floor (Copy)"));
+					print ("bye");
+				}
+			}
+		} else {
+			//brand new game
+		}
+
+		GenerateLevel(); //HACK move down
 
 		//make a new one
-		GenerateLevel();
 		gameStarted = true;
 		gameOver = false;
 		playerOne.SetActive(true);
@@ -106,6 +127,7 @@ public class GameManagerScript : MonoBehaviour {
 	}
 
 	void GenerateLevel () {
+		// making a new level
 		for (int i = 0; i < levelMap.GetLength(0); i ++) {
 			for (int j = 0; j < levelMap.GetLength(1); j ++) {
 				if (levelMap[i,j] != 0) {
@@ -127,7 +149,9 @@ public class GameManagerScript : MonoBehaviour {
 			playerTwo.GetComponent<PlayerController>().m_startingPosition = new Vector3 (xPos * 0.5f, -yPos * 0.5f, 0) + offset;
 			playerTwo.GetComponent<PlayerController>().m_respawnPosition = new Vector3 (xPos * 0.5f, -yPos * 0.5f, 0) + offset;
 		} else {
-			Instantiate(blocks[blockType - 3], new Vector3 (xPos * 0.5f, -yPos * 0.5f, 0) + offset, Quaternion.identity);
+			if (playerOneWins == 0 && playerTwoWins == 0) {//FIXME HACK TODO KILLME UNDONE
+			print ("making it");
+			Instantiate(blocks[blockType - 3], new Vector3 (xPos * 0.5f, -yPos * 0.5f, 0) + offset, Quaternion.identity);}
 		}
 	}
 
