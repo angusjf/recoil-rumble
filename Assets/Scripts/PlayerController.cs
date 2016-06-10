@@ -12,18 +12,16 @@ public class PlayerController : MonoBehaviour {
 	#endregion
 
 	#region varaibles - Assets
-	public AudioClip[] m_soundEffects;
-	public Sprite[] m_sprites;
+	public AudioClip[] m_soundEffects; // land, shoot, explosion
+	public Sprite[] m_sprites; //alive, dead, flying
 	public GameObject m_gunPrefab;
 	#endregion
 
 	#region varaibles - Current state (rules)
-	public int m_lastDirection = 1;
-	public int m_score = 0;
-	public bool m_onGround = false;
-	public bool m_hasControl = true;
-	public bool m_isAlive = true;
-	private bool m_canMove = true;
+	[HideInInspector]
+	public int m_lastDirection = 1, m_score = 0;
+	[HideInInspector]
+	public bool m_onGround = false, m_hasControl = true, m_isAlive = true, m_canMove = true;
 	#endregion
 
 	#region varaibles - Current state (physics)
@@ -32,6 +30,7 @@ public class PlayerController : MonoBehaviour {
 	float m_gravity = -0.015f;// -0.015f; // how much you accelerate down
 	float m_friction = 0.5f; // ground resistance
 	float m_airResistance = 0.2f; // air resistance;
+	[HideInInspector]
 	public Vector3 m_currentVelocity, m_terminalVelocity, m_currentAcceleration; //movement vectors
 	#endregion
 
@@ -41,11 +40,17 @@ public class PlayerController : MonoBehaviour {
 	#endregion
 
 	#region varaibles - Based on player number / settings
+	[HideInInspector]
 	public int m_playerNumber;
+	[HideInInspector]
 	public Color m_playerColor;
+	[HideInInspector]
 	private bool m_analogControls = false;
-	public Vector3 m_startingPosition, m_respawnPosition; //position vectors
+	[HideInInspector]
+	public Vector3 m_startingPosition;
+	[HideInInspector]
 	public string m_horizontalAxis, m_verticalAxis, m_fireButton; // controls
+	[HideInInspector]
 	public GameObject m_playerGun;
 	#endregion
 
@@ -65,7 +70,9 @@ public class PlayerController : MonoBehaviour {
 		m_horizontalAxis = "Horizontal" + m_playerNumber;
 		m_verticalAxis = "Vertical" + m_playerNumber;
 		m_fireButton = "Fire" + m_playerNumber;
-		m_playerColor = m_playerNumber == 1 ? new Color(0.97f,0.27f,0.30f) : new Color(0.40f,0.84f,0.31f);
+		//HACK TODO m_playerColor = m_playerNumber == 1 ? new Color(0.97f,0.27f,0.23f) : new Color(0.40f,0.84f,0.31f);
+		//change sprite instead TODO
+		m_playerColor = Color.white;
 		m_spriteRenderer.color = m_playerColor;
 		m_particleSystem.startColor = m_playerColor;
 		//Player Setup (physics)
@@ -92,7 +99,7 @@ public class PlayerController : MonoBehaviour {
 	}
 	#endregion
 
-	#region Methods
+	#region Movement methods
 	void Move () {
 		// controls => movement
 		if (m_hasControl) {
@@ -135,9 +142,9 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	bool IsOnGround () {
-		bool r = Mathf.Abs(DistanceToSolid(false)) < 0.01f && (bool)Physics2D.Raycast(transform.position,Vector3.down,m_boxCollider.size.y, m_solid); // HACK
+		bool r = Mathf.Abs(DistanceToSolid(false)) < 0.01f && (bool)Physics2D.Raycast(transform.position,Vector3.down,m_boxCollider.size.y, m_solid); // HACK but works...
 		if (r && !m_onGround) {
-			PlaySound(1);
+			PlaySound(0);
 		}
 
 		return r;
@@ -148,7 +155,7 @@ public class PlayerController : MonoBehaviour {
 		float a = 0;
 
 		// declare rayPosY and set it to the bottom of the collider
-		float rayPosX = -m_boxCollider.bounds.extents.x * 0.95f;
+		float rayPosX = (-m_boxCollider.bounds.extents.x /*EXPERIMENTAL*/ - m_boxCollider.offset.x) * 0.95f;
 		float rayPosY = -m_boxCollider.bounds.extents.y * 0.95f;
 
 		int currentRay = 0;
@@ -241,7 +248,9 @@ public class PlayerController : MonoBehaviour {
 		// move it
 		transform.position += displacement;
 	}
+	#endregion
 
+	#region other
 	public void Respawn () {
 		if (GameManagerScript.gameOver == false) {
 			m_hasControl = true;
@@ -249,7 +258,7 @@ public class PlayerController : MonoBehaviour {
 			m_canMove = true;
 			if (m_score > 0) m_score --;
 			m_currentVelocity = Vector3.zero;
-			TeleportTo(m_respawnPosition);
+			TeleportTo (GameObject.FindWithTag ("GameController").GetComponent<GameManagerScript> ().GetRandomRespawnPos ());
 			//TODO meybe respawn effects?
 			SetSprite(0);
 		}
@@ -286,7 +295,7 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	public void SetSprite (int id) {
-//		m_meshRenderer.sprite = m_sprites[id];
+		m_spriteRenderer.sprite = m_sprites[id];
 	}
 
 	void OnTriggerEnter2D (Collider2D other) {
@@ -303,6 +312,12 @@ public class PlayerController : MonoBehaviour {
 		if (!m_isAlive && other.gameObject.tag == "Solid") {
 			m_currentVelocity.x = 0;
 		}
+	}
+
+	public void SafeDestroy () {
+		GetComponent<PlayerHudDisplayer>().DestroyElements();
+		Destroy(m_playerGun);
+		Destroy(gameObject);
 	}
 	#endregion
 }

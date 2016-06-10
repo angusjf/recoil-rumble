@@ -14,7 +14,7 @@ public class BulletController : MonoBehaviour {
 
 	void Start () {
 		rb = GetComponent<Rigidbody2D>();
-		v = direction * speed;
+		v = direction * speed + new Vector3(0, owner.GetComponent<PlayerController> ().m_currentVelocity.y, 0);
 		a = Vector3.zero;
 
 		Destroy(gameObject,2f);
@@ -33,7 +33,6 @@ public class BulletController : MonoBehaviour {
 			Destroy(gameObject, 0f); //delete bullet
 			speed = 0f; // ?
 		} else if (other.gameObject != owner && other.gameObject.tag.Contains("Player")) {
-
 			// only do this if its not already dead
 			if (other.gameObject.GetComponent<PlayerController>().m_isAlive) {
 				// do damage / fx
@@ -50,8 +49,8 @@ public class BulletController : MonoBehaviour {
 			}
 			other.GetComponent<PlayerController>().AddForce(direction * hitForce);
 
-			// hit sound? HACK - TODO move to bullet
-			owner.GetComponent<PlayerController>().PlaySound(3);
+			// hit sound / Explosion? HACK - TODO move to bullet 
+			owner.GetComponent<PlayerController>().PlaySound(2); // can cause error null ref
 
 			//delete bullet
 			Destroy(gameObject, 0f);
