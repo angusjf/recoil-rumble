@@ -27,7 +27,7 @@ public class UiButtonScript : MonoBehaviour {
 	void Update () {
 		if (selected) {
 			//press
-			if (Input.GetKey(MenuController.CONFIRM_KEY)) {
+			if (Input.GetKey(GameManagerScript.CONFIRM_KEY)) {
 				//TODO swap to a different sprite
 				sr.sprite = pressedSprite;
 				if (isUiAction) {
@@ -38,12 +38,12 @@ public class UiButtonScript : MonoBehaviour {
 			}
 
 			//move up / down
-			if (Input.GetKey(MenuController.DOWN_KEY) || Input.GetKey(MenuController.DOWN_KEY)) {
+			if (Input.GetKey(GameManagerScript.DOWN_KEY) || Input.GetKey(GameManagerScript.DOWN_KEY)) {
 				selected = false;
 				//change sprite
-				if (Input.GetKey(MenuController.DOWN_KEY))
+				if (Input.GetKey(GameManagerScript.DOWN_KEY))
 					previousElement.GetComponent<UiButtonScript>().Select();
-				if (Input.GetKey(MenuController.UP_KEY))
+				if (Input.GetKey(GameManagerScript.UP_KEY))
 					nextElement.GetComponent<UiButtonScript>().Select();
 			}
 		}

@@ -9,11 +9,6 @@ public class MenuController : MonoBehaviour {
 	
 	List<GameObject> uiElements = new List<GameObject>();
 	GameObject buttonPrefab;
-	
-	public static KeyCode CONFIRM_KEY = KeyCode.Return;
-	public static KeyCode CANCEL_KEY = KeyCode.Backspace;
-	public static KeyCode UP_KEY = KeyCode.UpArrow;
-	public static KeyCode DOWN_KEY = KeyCode.UpArrow;
 
 	enum MenuPage {
 		MAIN,

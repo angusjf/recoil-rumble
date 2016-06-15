@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 public class GameManagerScript : MonoBehaviour {
 	#region varaibles
 	//game state
-	public static bool gameStarted, gameOver;
+	public static bool gameStarted, gameOver, gamePaused;
 	public const int winScore = 5;
 	public static string lastWinner;
 	public static int playerOneWins = 0, playerTwoWins = 0;
@@ -23,7 +23,7 @@ public class GameManagerScript : MonoBehaviour {
 	 * 1 = respawn pos
 	 * 2 = block
 	 */
-
+	#region map
 	int[,] levelMap = new int[30,40] {
 		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -57,6 +57,15 @@ public class GameManagerScript : MonoBehaviour {
 		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
     };
 	#endregion
+	#endregion
+
+	#region constants
+	public const KeyCode CONFIRM_KEY = KeyCode.Return;
+	public const KeyCode CANCEL_KEY = KeyCode.Backspace;
+	public const KeyCode UP_KEY = KeyCode.UpArrow;
+	public const KeyCode DOWN_KEY = KeyCode.UpArrow;
+	public const KeyCode PAUSE_KEY = KeyCode.P;
+	#endregion
 
 	void Awake () {
 		menu = GetComponent<MenuController>();
@@ -65,7 +74,9 @@ public class GameManagerScript : MonoBehaviour {
 	void Update () {
 		if (gameStarted && !gameOver) {
 			//INPUT - PAUSE
-
+			if (Input.GetKey (GameManagerScript.PAUSE_KEY)) {
+				Pause ();
+			}
 
 			if (playerOne.GetComponent<PlayerController>().m_score >= winScore) {
 				GameOver(playerOne);
@@ -92,7 +103,6 @@ public class GameManagerScript : MonoBehaviour {
 			playerOne.GetComponent<PlayerController>().SafeDestroy();
 			playerTwo.GetComponent<PlayerController>().SafeDestroy();
 
-			
 			foreach (GameObject o in Object.FindObjectsOfType<GameObject>()) {
 				if (o.tag == "Solid") {
 					Destroy(o);
@@ -112,8 +122,9 @@ public class GameManagerScript : MonoBehaviour {
 		playerTwo.SetActive(true);
 	}
 
-	void ResetGame () {	
-		
+	void Pause () {	
+		Debug.Log("game would pause");
+		menu.OpenMenu ("pause");
 	}
 
 	void GenerateLevel () {
