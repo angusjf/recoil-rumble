@@ -64,6 +64,9 @@ public class GameManagerScript : MonoBehaviour {
 
 	void Update () {
 		if (gameStarted && !gameOver) {
+			//INPUT - PAUSE
+
+
 			if (playerOne.GetComponent<PlayerController>().m_score >= winScore) {
 				GameOver(playerOne);
 			}
@@ -161,6 +164,6 @@ public class GameManagerScript : MonoBehaviour {
 	}
 
 	public Vector3 GetRandomRespawnPos () {
-		return Vector3.zero;
+		return new Vector3(2, 2, 0);//TODO
 	}
 }
