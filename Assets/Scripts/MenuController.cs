@@ -8,7 +8,7 @@ public class MenuController : MonoBehaviour {
 	GameManagerScript gameManagerScript;
 	
 	List<GameObject> uiElements = new List<GameObject>();
-	GameObject buttonPrefab;
+	public GameObject buttonPrefab;
 
 	enum MenuPage {
 		MAIN,
@@ -20,10 +20,8 @@ public class MenuController : MonoBehaviour {
 		END
 	};
 	
-	void Start () {
+	void Awake () { //no start needed 
 		gameManagerScript = GameObject.FindWithTag("GameController").GetComponent<GameManagerScript>();
-		currentPage = MenuPage.MAIN;
-		ShowMenu();
 	}
 
 	public void OpenMenu (string menu) { //ONLY PUBLIC MENU METHOD
@@ -32,16 +30,16 @@ public class MenuController : MonoBehaviour {
 				currentPage = MenuPage.MAIN;
 				break;
 			case "play":
-				currentPage = MenuPage.MAIN;
+				currentPage = MenuPage.PLAY;
 				break;
 			case "options":
-				currentPage = MenuPage.MAIN;
+				currentPage = MenuPage.OPTIONS;
 				break;
 			case "controls":
-				currentPage = MenuPage.MAIN;
+				currentPage = MenuPage.CONTROLS;
 				break;
 			case "credits":
-				currentPage = MenuPage.MAIN;
+				currentPage = MenuPage.CREDITS;
 				break;
 			case "pause":
 				currentPage = MenuPage.PAUSE;
@@ -58,13 +56,26 @@ public class MenuController : MonoBehaviour {
 	}
 
 	private void ShowMenu () { //internal method
+		print("swapping to menu " + currentPage);
 		HideMenu ();
 		switch(currentPage) {
 			case MenuPage.MAIN:
-				ShowEndMenu();
+				ShowMainMenu();
+				break;
+			case MenuPage.PLAY:
+				ShowPlayMenu();
+				break;
+			case MenuPage.OPTIONS:
+				ShowOptionsMenu();
+				break;
+			case MenuPage.CONTROLS:
+				ShowControlsMenu();
+				break;
+			case MenuPage.CREDITS:
+				ShowCreditsMenu();
 				break;
 			case MenuPage.PAUSE:
-				ShowEndMenu();
+				ShowPauseMenu();
 				break;
 			case MenuPage.END:
 				ShowEndMenu();
@@ -83,7 +94,11 @@ public class MenuController : MonoBehaviour {
 
 	public void StartUiAction(string action) { //for doing things like pause
 		switch (action) {
-			case "start":
+			case "points":
+				gameManagerScript.StartGame();
+				HideMenu();
+				break;
+			case "timed":
 				gameManagerScript.StartGame();
 				HideMenu();
 				break;
@@ -103,44 +118,47 @@ public class MenuController : MonoBehaviour {
 
 	private void CreateButton (Vector3 position, bool isUiAction, string actionName, GameObject previousElement) { //only way to instantiate a button
 		uiElements.Add(Instantiate(buttonPrefab, position, Quaternion.identity) as GameObject);
-		//uiElements[uiElements.Count - 1].GetComponent<UiButtonScript>().SetUpButton(bool isUiAction, string actionName, GameObject previousElement); //TODO
+		uiElements[uiElements.Count - 1].GetComponent<UiButtonScript>().SetUpButton(isUiAction, actionName, previousElement); //TODO
 	}
 
 	private void ShowMainMenu () {		//MAIN
 		//Instantiate a play button
-		CreateButton(Vector3.zero, true, "play", uiElements[uiElements.Count - 2]); //MAYBE - 1 ???
-		//link button to call openMenu with "play"
+		CreateButton(new Vector3(0,0,0), true, "play", null);
 		//Instantiate a options button
-		//link button to call openMenu with "option"
+		CreateButton(new Vector3(0,-1f, 0), true, "options", uiElements[uiElements.Count - 1]);
 		//Instantiate a credits button
-		//link button to call openMenu with "credits"
+		CreateButton(new Vector3(0,-2f, 0), true, "credits", uiElements[uiElements.Count - 1]);
 		//Instantiate a exit button
-		//link button to call GameManager.Exit
+		CreateButton(new Vector3(0,-3f, 0), false, "quit", uiElements[uiElements.Count -  1]);
 	}
 
 	private void ShowPlayMenu () {			//PLAY
 		//Instanciate a points mode button
-		//link button to call OpenMenu with points mode
+		CreateButton(new Vector3(0,0f, 0), false, "points", null);
 		//Instanciate a time mode button
-		//link button to call OpenMenu with time mode
+		CreateButton(new Vector3(0,-1f, 0), false, "timed", uiElements[uiElements.Count -  1]);
 		//Instanciate a back button
-		//link button to call OpenMenu with Main
+		CreateButton(new Vector3(0,-2f, 0), true, "main", uiElements[uiElements.Count -  1]);
 	}
 
 	private void ShowOptionsMenu () {		//OPTIONS
-
+		//Instanciate a back button
+		CreateButton(new Vector3(0,-0f, 0), true, "main", null /*uiElements[uiElements.Count -  1]*/);
 	}
 
 	private void ShowControlsMenu () {			//CONTROLS
-
+		//Instanciate a back button
+		CreateButton(new Vector3(0,-0f, 0), true, "main", null /*uiElements[uiElements.Count -  1]*/);
 	}
 
 	private void ShowCreditsMenu () {		//CREDITS
-
+		//Instanciate a back button
+		CreateButton(new Vector3(0,-0f, 0), true, "main", null /*uiElements[uiElements.Count -  1]*/);
 	}
 
 	private void ShowPauseMenu () {		//PAUSE
-		
+		//Instanciate a back button
+		CreateButton(new Vector3(0,-0f, 0), true, "main", null /*uiElements[uiElements.Count -  1]*/);
 	}
 
 	private void ShowEndMenu () {		//END

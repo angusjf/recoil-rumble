@@ -63,12 +63,16 @@ public class GameManagerScript : MonoBehaviour {
 	public const KeyCode CONFIRM_KEY = KeyCode.Return;
 	public const KeyCode CANCEL_KEY = KeyCode.Backspace;
 	public const KeyCode UP_KEY = KeyCode.UpArrow;
-	public const KeyCode DOWN_KEY = KeyCode.UpArrow;
+	public const KeyCode DOWN_KEY = KeyCode.DownArrow;
 	public const KeyCode PAUSE_KEY = KeyCode.P;
 	#endregion
 
 	void Awake () {
 		menu = GetComponent<MenuController>();
+	}
+
+	void Start () {
+		menu.OpenMenu ("main");
 	}
 
 	void Update () {
@@ -95,7 +99,6 @@ public class GameManagerScript : MonoBehaviour {
 		}
 	}
 
-	
 	public void StartGame () {
 		//clean up old game
 		if (playerOneWins != 0 || playerTwoWins != 0) {
@@ -140,17 +143,14 @@ public class GameManagerScript : MonoBehaviour {
 
 	void CreateBlock (int yPos, int xPos, int blockType) {
 		if (blockType == 1) {
-			{ // p1
-				playerOne = Instantiate (playerPrefab) as GameObject;
-				playerOne.GetComponent<PlayerController> ().m_playerNumber = 1;
-				playerOne.GetComponent<PlayerController> ().m_startingPosition = new Vector3 (xPos * 0.5f, -yPos * 0.5f, 0) + offset;
-			}
-
-			{ // p2
-				playerTwo = Instantiate (playerPrefab) as GameObject;
-				playerTwo.GetComponent<PlayerController> ().m_playerNumber = 2;
-				playerTwo.GetComponent<PlayerController> ().m_startingPosition = new Vector3 (xPos * 0.5f, -yPos * 0.5f, 0) + offset;
-			}
+			// p1
+			playerOne = Instantiate (playerPrefab) as GameObject;
+			playerOne.GetComponent<PlayerController> ().m_playerNumber = 1;
+			playerOne.GetComponent<PlayerController> ().m_startingPosition = new Vector3 (xPos * 0.5f, -yPos * 0.5f, 0) + offset;
+			// p2
+			playerTwo = Instantiate (playerPrefab) as GameObject;
+			playerTwo.GetComponent<PlayerController> ().m_playerNumber = 2;
+			playerTwo.GetComponent<PlayerController> ().m_startingPosition = new Vector3 (xPos * 0.5f, -yPos * 0.5f, 0) + offset;
 		} else {
 			Instantiate(blocks[blockType - 2], new Vector3 (xPos * 0.5f, -yPos * 0.5f, 0) + offset, Quaternion.identity);
 		}
