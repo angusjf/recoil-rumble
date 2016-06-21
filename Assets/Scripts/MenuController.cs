@@ -10,6 +10,8 @@ public class MenuController : MonoBehaviour {
 	List<GameObject> uiElements = new List<GameObject>();
 	public GameObject buttonPrefab;
 
+	public Sprite[] wordSprites = new Sprite[8];
+
 	enum MenuPage {
 		MAIN,
 			PLAY,
@@ -116,9 +118,9 @@ public class MenuController : MonoBehaviour {
 		}
 	}
 
-	private void CreateButton (Vector3 position, bool isUiAction, string actionName, GameObject previousElement) { //only way to instantiate a button
+	private void CreateButton (Vector3 position, bool isUiAction, string actionName, GameObject previousElement, int wordSpriteNumber) { //only way to instantiate a button
 		uiElements.Add(Instantiate(buttonPrefab, position, Quaternion.identity) as GameObject);
-		uiElements[uiElements.Count - 1].GetComponent<UiButtonScript>().SetUpButton(isUiAction, actionName, previousElement); //TODO
+		uiElements[uiElements.Count - 1].GetComponent<UiButtonScript>().SetUpButton(isUiAction, actionName, previousElement, wordSprites[wordSpriteNumber]); //TODO
 	}
 
 	private void ShowMainMenu () {		//MAIN
