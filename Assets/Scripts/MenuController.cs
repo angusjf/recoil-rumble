@@ -8,8 +8,11 @@ public class MenuController : MonoBehaviour {
 	GameManagerScript gameManagerScript;
 	
 	List<GameObject> uiElements = new List<GameObject>();
+	public GameObject imagePrefab;
 	public GameObject buttonPrefab;
 
+	public Sprite titleImage;
+	public Sprite twitterImage;
 	public Sprite[] wordSprites = new Sprite[8];
 
 	enum MenuPage {
@@ -123,44 +126,52 @@ public class MenuController : MonoBehaviour {
 		uiElements[uiElements.Count - 1].GetComponent<UiButtonScript>().SetUpButton(isUiAction, actionName, previousElement, wordSprites[wordSpriteNumber]); //TODO
 	}
 
+	private void CreateImage (Vector3 position, Sprite image) { //only way to instantiate a button
+		uiElements.Add(Instantiate(imagePrefab, position, Quaternion.identity) as GameObject);
+		uiElements[uiElements.Count - 1].GetComponent<SpriteRenderer>().sprite = image; //TODO
+	}
+
 	private void ShowMainMenu () {		//MAIN
+		//TODO Instaticate title image
+		CreateImage(new Vector3(0,3f,0), titleImage);
 		//Instantiate a play button
-		CreateButton(new Vector3(0,0,0), true, "play", null);
+		CreateButton(new Vector3(0,0,0), true, "play", null, 0);
 		//Instantiate a options button
-		CreateButton(new Vector3(0,-1f, 0), true, "options", uiElements[uiElements.Count - 1]);
+		CreateButton(new Vector3(0,-1f, 0), true, "options", uiElements[uiElements.Count - 1], 1);
 		//Instantiate a credits button
-		CreateButton(new Vector3(0,-2f, 0), true, "credits", uiElements[uiElements.Count - 1]);
+		CreateButton(new Vector3(0,-2f, 0), true, "credits", uiElements[uiElements.Count - 1], 2);
 		//Instantiate a exit button
-		CreateButton(new Vector3(0,-3f, 0), false, "quit", uiElements[uiElements.Count -  1]);
+		CreateButton(new Vector3(0,-3f, 0), false, "quit", uiElements[uiElements.Count -  1], 3);
 	}
 
 	private void ShowPlayMenu () {			//PLAY
 		//Instanciate a points mode button
-		CreateButton(new Vector3(0,0f, 0), false, "points", null);
+		CreateButton(new Vector3(0,0f, 0), false, "points", null, 4);
 		//Instanciate a time mode button
-		CreateButton(new Vector3(0,-1f, 0), false, "timed", uiElements[uiElements.Count -  1]);
+		CreateButton(new Vector3(0,-1f, 0), false, "timed", uiElements[uiElements.Count -  1], 5);
 		//Instanciate a back button
-		CreateButton(new Vector3(0,-2f, 0), true, "main", uiElements[uiElements.Count -  1]);
+		CreateButton(new Vector3(0,-2f, 0), true, "main", uiElements[uiElements.Count -  1], 6);
 	}
 
 	private void ShowOptionsMenu () {		//OPTIONS
 		//Instanciate a back button
-		CreateButton(new Vector3(0,-0f, 0), true, "main", null /*uiElements[uiElements.Count -  1]*/);
+		CreateButton(new Vector3(0,-0f, 0), true, "main", null /*uiElements[uiElements.Count -  1]*/, 6);
 	}
 
 	private void ShowControlsMenu () {			//CONTROLS
 		//Instanciate a back button
-		CreateButton(new Vector3(0,-0f, 0), true, "main", null /*uiElements[uiElements.Count -  1]*/);
+		CreateButton(new Vector3(0,-0f, 0), true, "main", null /*uiElements[uiElements.Count -  1]*/, 6);
 	}
 
 	private void ShowCreditsMenu () {		//CREDITS
 		//Instanciate a back button
-		CreateButton(new Vector3(0,-0f, 0), true, "main", null /*uiElements[uiElements.Count -  1]*/);
+		CreateButton(new Vector3(0,-0f, 0), true, "main", null /*uiElements[uiElements.Count -  1]*/, 6);
 	}
 
 	private void ShowPauseMenu () {		//PAUSE
-		//Instanciate a back button
-		CreateButton(new Vector3(0,-0f, 0), true, "main", null /*uiElements[uiElements.Count -  1]*/);
+		//TODO no idea yet
+		CreateButton(new Vector3(0,-0f, 0), true, "play", null /*uiElements[uiElements.Count -  1]*/, 0);
+		CreateButton(new Vector3(0,-1f, 0), true, "main", null /*uiElements[uiElements.Count -  1]*/, 6);
 	}
 
 	private void ShowEndMenu () {		//END

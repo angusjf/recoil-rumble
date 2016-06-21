@@ -5,8 +5,8 @@ public class UiButtonScript : MonoBehaviour {
 	
 	private bool selected = false;
 
+	public GameObject wordPrefab;
 	public Sprite normalSprite, selectedSprite, pressedSprite;
-	private Sprite[] wordSprites = new Sprite[2];
 	private SpriteRenderer sr;
 	private MenuController mc;
 	private GameObject text;
@@ -20,18 +20,19 @@ public class UiButtonScript : MonoBehaviour {
 		mc = GameObject.FindWithTag("GameController").GetComponent<MenuController>();
 	}
 
-	public void SetUpButton (bool isUiAction, string actionName, GameObject previousElement, Sprite[] wordSprites) {
+	public void SetUpButton (bool isUiAction, string actionName, GameObject previousElement, Sprite wordSprite) {
 		this.isUiAction = isUiAction;
 		this.actionName = actionName;
 		this.previousElement = previousElement;
-		this.wordSprites = wordSprites;
 		//text
-		text = Instantiate() as GameObject;
+		text = Instantiate(wordPrefab, transform.position + new Vector3(0,0,-1), Quaternion.identity) as GameObject;
+		text.transform.parent = gameObject.transform;
+		text.GetComponent<SpriteRenderer>().sprite = wordSprite;
 		//sprite
 		if (previousElement == null) {
 			Select ();
 		} else {
-			sr.sprite = normalSprite;
+			Deselect();
 			//linked list
 			previousElement.GetComponent<UiButtonScript>().SetNextElement(this.gameObject);
 		}
@@ -45,8 +46,8 @@ public class UiButtonScript : MonoBehaviour {
 			}
 			//move up / down
 			if (Input.GetKeyDown (GameManagerScript.DOWN_KEY) && nextElement != null) {
-				Deselect();
 				nextElement.GetComponent<UiButtonScript> ().Select (); //BROKEN why
+				Deselect();
 			}
 			if (Input.GetKeyDown (GameManagerScript.UP_KEY) && previousElement != null) {
 				previousElement.GetComponent<UiButtonScript> ().Select ();
@@ -57,20 +58,18 @@ public class UiButtonScript : MonoBehaviour {
 
 	public void Select() {
 		sr.sprite = selectedSprite;
-		text.GetComponent<SpriteRenderer>().sprite = normalSprite;
 		selected = true;
 	}
 
 	void Deselect () {
 		sr.sprite = normalSprite;
-		text.GetComponent<SpriteRenderer>().sprite = normalSprite;
 		selected = false;
 	}
 
 	IEnumerator Press() {
 		sr.sprite = pressedSprite;
-		for (int i = 0; i < 20; i++)
-			yield return null;
+		text.transform.position += new Vector3 (0, -0.23f); // TODO exact number
+		for (int i = 0; i < 20; i++) {yield return null;}
 		if (isUiAction) {
 			mc.OpenMenu(actionName);
 		} else {
