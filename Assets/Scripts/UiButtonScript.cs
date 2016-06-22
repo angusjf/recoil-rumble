@@ -2,18 +2,19 @@
 using System.Collections;
 
 public class UiButtonScript : MonoBehaviour {
-	
-	private bool selected = false;
-
+	#region refs
 	public GameObject wordPrefab;
 	public Sprite normalSprite, selectedSprite, pressedSprite;
 	private SpriteRenderer sr;
 	private MenuController mc;
+	#endregion
+	#region state
+	private bool selected = false;
 	private GameObject text;
-
-	bool isUiAction;
-	string actionName;
-	GameObject nextElement, previousElement;
+	private bool isUiAction;
+	private string actionName;
+	public GameObject nextElement, previousElement;
+	#endregion
 
 	void Awake () {
 		sr = GetComponent<SpriteRenderer>();
@@ -24,17 +25,16 @@ public class UiButtonScript : MonoBehaviour {
 		this.isUiAction = isUiAction;
 		this.actionName = actionName;
 		this.previousElement = previousElement;
-		//text
+		//text setup
 		text = Instantiate(wordPrefab, transform.position + new Vector3(0,0,-1), Quaternion.identity) as GameObject;
 		text.transform.parent = gameObject.transform;
 		text.GetComponent<SpriteRenderer>().sprite = wordSprite;
-		//sprite
+		//sprite setup
 		if (previousElement == null) {
 			Select ();
 		} else {
 			Deselect();
-			//linked list
-			previousElement.GetComponent<UiButtonScript>().SetNextElement(this.gameObject);
+			previousElement.GetComponent<UiButtonScript>().SetNextElement(this.gameObject); //linked list
 		}
 	}
 	
@@ -56,7 +56,7 @@ public class UiButtonScript : MonoBehaviour {
 		}
 	}
 
-	public void Select() {
+	void Select() {
 		sr.sprite = selectedSprite;
 		selected = true;
 	}
@@ -68,8 +68,8 @@ public class UiButtonScript : MonoBehaviour {
 
 	IEnumerator Press() {
 		sr.sprite = pressedSprite;
-		text.transform.position += new Vector3 (0, -0.23f); // TODO exact number
-		for (int i = 0; i < 20; i++) {yield return null;}
+		text.transform.position += new Vector3 (0, -0.17f); // TODO exact number
+		for (int i = 0; i < 10; i++) {yield return null;}
 		if (isUiAction) {
 			mc.OpenMenu(actionName);
 		} else {

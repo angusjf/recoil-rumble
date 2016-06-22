@@ -12,7 +12,8 @@ public class MenuController : MonoBehaviour {
 	public GameObject buttonPrefab;
 
 	public Sprite titleImage;
-	public Sprite twitterImage;
+	public Sprite twitterImage1;
+	public Sprite twitterImage2;
 	public Sprite[] wordSprites = new Sprite[8];
 
 	enum MenuPage {
@@ -107,6 +108,10 @@ public class MenuController : MonoBehaviour {
 				gameManagerScript.StartGame();
 				HideMenu();
 				break;
+			case "web":
+				Application.OpenURL("http://findlang.github.io/");
+				HideMenu();
+				break;
 			case "pause":
 				print("pause not implemented yet");
 				break;
@@ -164,8 +169,14 @@ public class MenuController : MonoBehaviour {
 	}
 
 	private void ShowCreditsMenu () {		//CREDITS
+		//TODO Instaticate title image
+		CreateImage(new Vector3(0,0f,0), twitterImage1);
+		//TODO Instaticate title image
+		CreateImage(new Vector3(0,-1f,0), twitterImage2);
 		//Instanciate a back button
-		CreateButton(new Vector3(0,-0f, 0), true, "main", null /*uiElements[uiElements.Count -  1]*/, 6);
+		CreateButton(new Vector3(0,-2f, 0), false, "web", null, 7);
+		//Instanciate a back button
+		CreateButton(new Vector3(0,-3f, 0), true, "main", uiElements[uiElements.Count -  1], 6);
 	}
 
 	private void ShowPauseMenu () {		//PAUSE
