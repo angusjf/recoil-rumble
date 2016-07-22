@@ -110,7 +110,7 @@ public class MenuController : MonoBehaviour {
 				break;
 			case "web":
 				Application.OpenURL("http://findlang.github.io/");
-				HideMenu();
+				OpenMenu("main");
 				break;
 			case "pause":
 				print("pause not implemented yet");

@@ -129,10 +129,8 @@ public class PlayerController : MonoBehaviour {
 			m_currentVelocity.y = 0;
 			m_currentAcceleration.y = 0;
 		}
-
 		//apply drag on y NOT NEEDED
-//		m_currentAcceleration.y += Mathf.Sign(m_currentVelocity.y) * -Mathf.Abs(m_currentVelocity.x);
-
+		//m_currentAcceleration.y += Mathf.Sign(m_currentVelocity.y) * -Mathf.Abs(m_currentVelocity.x);
 		//turn maths to pictures
 		SetPosition ();
 	}
@@ -146,18 +144,20 @@ public class PlayerController : MonoBehaviour {
 		if (r && !m_onGround) {
 			PlaySound(0);
 		}
-
 		return r;
 	}
 
 	float DistanceToSolid (bool horizontal) {
+		/* takes in a bool (vertical / horizontal).
+		 * and return a value of how far away the nearest solid is.
+		 * positive = down; negative = down.
+		 * returns wired numbers for errors (positive or negative).
+		 */
 		float[] distances = new float[m_numberOfRays];
 		float a = 0;
-
 		// declare rayPosY and set it to the bottom of the collider
 		float rayPosX = (-m_boxCollider.bounds.extents.x /*EXPERIMENTAL*/ - m_boxCollider.offset.x) * 0.95f;
 		float rayPosY = -m_boxCollider.bounds.extents.y * 0.95f;
-
 		int currentRay = 0;
 		Vector3 direction = Vector3.one;
 
@@ -201,8 +201,9 @@ public class PlayerController : MonoBehaviour {
 			float shortestDistance = 170000f * direction.x;
 
 			for (int i = 0; i < m_numberOfRays - 1; i ++) {
-				if (Mathf.Abs(distances[i]) < Mathf.Abs(shortestDistance))
+				if (Mathf.Abs(distances[i]) < Mathf.Abs(shortestDistance)) {
 					shortestDistance = distances[i];
+				}
 			}
 
 			return shortestDistance;
@@ -210,12 +211,11 @@ public class PlayerController : MonoBehaviour {
 
 		if (!horizontal) {
 			float shortestDistance = 170000f * direction.y;
-
 			for (int i = 0; i < m_numberOfRays - 1; i ++) {
-				if (Mathf.Abs(distances[i]) < Mathf.Abs(shortestDistance))
+				if (Mathf.Abs(distances[i]) < Mathf.Abs(shortestDistance)) {
 					shortestDistance = distances[i];
+				}
 			}
-
 			return shortestDistance;
 		}
 

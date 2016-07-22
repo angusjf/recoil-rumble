@@ -13,7 +13,7 @@ public class UiButtonScript : MonoBehaviour {
 	private GameObject text;
 	private bool isUiAction;
 	private string actionName;
-	public GameObject nextElement, previousElement;
+	private GameObject nextElement, previousElement;
 	#endregion
 
 	void Awake () {
