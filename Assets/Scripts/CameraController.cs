@@ -14,11 +14,16 @@ public class CameraController : MonoBehaviour {
 	float shakeAmount;
 	int shakeFrames;
 
+	public Shader shader;
+
 	void Start () {
 		gameManagerScript = GameObject.FindWithTag ("GameController").GetComponent<GameManagerScript> ();
 		playerPosition = transform.position;
 		bounds.y = GetComponent<Camera> ().orthographicSize;
 		bounds.x = bounds.y * GetComponent<Camera> ().aspect;
+
+		//S H A D E R   S T U F F
+		GetComponent<Camera>().RenderWithShader(shader, "Hidden/ReplaceCameraColors");
 	}
 
 	void Update () {

@@ -47,8 +47,6 @@ public class PlayerController : MonoBehaviour {
 	[HideInInspector]
 	private bool m_analogControls = false;
 	[HideInInspector]
-	public Vector3 m_startingPosition;
-	[HideInInspector]
 	public string m_horizontalAxis, m_verticalAxis, m_fireButton; // controls
 	[HideInInspector]
 	public GameObject m_playerGun;
@@ -79,7 +77,6 @@ public class PlayerController : MonoBehaviour {
 		m_currentVelocity = Vector3.zero;
 		m_terminalVelocity = new Vector3(1000,1000,0);
 		m_currentAcceleration = Vector3.zero;
-		transform.position = m_startingPosition;
 		//Gun Setup
 		m_playerGun = Instantiate(m_gunPrefab) as GameObject;
 		m_playerGun.GetComponent<GunController>().owner = gameObject;

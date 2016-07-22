@@ -172,7 +172,7 @@ public class MenuController : MonoBehaviour {
 		//TODO Instaticate title image
 		CreateImage(new Vector3(0,0f,0), twitterImage1);
 		//TODO Instaticate title image
-		CreateImage(new Vector3(0,-1f,0), twitterImage2);
+		//CreateImage(new Vector3(0,-1f,0), twitterImage2); //TODO
 		//Instanciate a back button
 		CreateButton(new Vector3(0,-2f, 0), false, "web", null, 7);
 		//Instanciate a back button
@@ -180,13 +180,19 @@ public class MenuController : MonoBehaviour {
 	}
 
 	private void ShowPauseMenu () {		//PAUSE
-		//TODO no idea yet
+		//TODO RESUME
+		//TODO RESTART
+		//TODO MENU
 		CreateButton(new Vector3(0,-0f, 0), true, "play", null /*uiElements[uiElements.Count -  1]*/, 0);
 		CreateButton(new Vector3(0,-1f, 0), true, "main", null /*uiElements[uiElements.Count -  1]*/, 6);
 	}
 
 	private void ShowEndMenu () {		//END
-	/*
+		//score 1 TODO
+		//score 2 TODO
+		CreateButton(new Vector3(0,-2f, 0), true, "play", null, 8); //TODO change it to current mode eg "timed"
+		CreateButton(new Vector3(0,-3f, 0), true, "main", uiElements[uiElements.Count -  1], 9);
+		/*
 		// Title Image
 		uiElements.Add(Instantiate (titleImagePrefab) as GameObject);
 		if (GameManagerScript.lastWinner == null) {
@@ -217,6 +223,6 @@ public class MenuController : MonoBehaviour {
 			uiElements[4].GetComponent<SpriteRenderer> ().enabled = true;
 			uiElements[4].GetComponent<SpriteRenderer> ().sprite = tally2Sprites[GameManagerScript.playerTwoWins - 1];
 		}
-	*/
+		*/
 	}
 }
