@@ -21,9 +21,6 @@ public class CameraController : MonoBehaviour {
 		playerPosition = transform.position;
 		bounds.y = GetComponent<Camera> ().orthographicSize;
 		bounds.x = bounds.y * GetComponent<Camera> ().aspect;
-
-		//S H A D E R   S T U F F
-		GetComponent<Camera>().RenderWithShader(shader, "Hidden/ReplaceCameraColors");
 	}
 
 	void Update () {
