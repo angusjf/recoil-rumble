@@ -48,7 +48,7 @@ public class PlayerController : MonoBehaviour {
 	private bool m_analogControls = false;
 	[HideInInspector]
 	public string m_horizontalAxis, m_verticalAxis, m_fireButton; // controls
-	[HideInInspector]
+	//[HideInInspector]
 	public GameObject m_playerGun;
 	#endregion
 
@@ -62,7 +62,7 @@ public class PlayerController : MonoBehaviour {
 		m_spriteRenderer = GetComponent<SpriteRenderer>();
 	}
 
-	void Start () {
+	public void Spawn () {
 		//Player Setup (rules)
 		tag = "Player" + m_playerNumber;
 		m_horizontalAxis = "Horizontal" + m_playerNumber;
@@ -77,6 +77,7 @@ public class PlayerController : MonoBehaviour {
 		m_currentVelocity = Vector3.zero;
 		m_terminalVelocity = new Vector3(1000,1000,0);
 		m_currentAcceleration = Vector3.zero;
+		TeleportTo (GameObject.FindWithTag ("GameController").GetComponent<GameManagerScript> ().GetRandomRespawnPos ());
 		//Gun Setup
 		m_playerGun = Instantiate(m_gunPrefab) as GameObject;
 		m_playerGun.GetComponent<GunController>().owner = gameObject;
@@ -258,6 +259,8 @@ public class PlayerController : MonoBehaviour {
 			TeleportTo (GameObject.FindWithTag ("GameController").GetComponent<GameManagerScript> ().GetRandomRespawnPos ());
 			//TODO meybe respawn effects?
 			SetSprite(0);
+			//reload gun
+			m_playerGun.GetComponent<GunController>().Reload();
 		}
 	}
 

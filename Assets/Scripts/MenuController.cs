@@ -190,7 +190,7 @@ public class MenuController : MonoBehaviour {
 	private void ShowEndMenu () {		//END
 		//score 1 TODO
 		//score 2 TODO
-		CreateButton(new Vector3(0,-2f, 0), true, "play", null, 8); //TODO change it to current mode eg "timed"
+		CreateButton(new Vector3(0,-2f, 0), false, "points", null, 8); //TODO change it to current mode eg "timed"
 		CreateButton(new Vector3(0,-3f, 0), true, "main", uiElements[uiElements.Count -  1], 9);
 		/*
 		// Title Image

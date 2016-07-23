@@ -14,7 +14,7 @@ public class PlayerHudDisplayer : MonoBehaviour {
 	GameObject[] scoreCounters;
 	GameObject[] ammoCounters;
 	GameObject arrow;
-	
+
 	public Sprite[] starSprites = new Sprite[2];
 	public Sprite[] ammoSprites = new Sprite[2];
 	#endregion
@@ -100,7 +100,9 @@ public class PlayerHudDisplayer : MonoBehaviour {
 		Vector3 pos = transform.position;
 		Vector3 rot = Vector3.zero;
 			
-		if (Mathf.Abs(pos.x) > Mathf.Abs(cameraMaxPos.x) + 1f || Mathf.Abs(pos.y) > Mathf.Abs(cameraMaxPos.y) + 1f) {
+		//isOnScreen = !(Mathf.Abs(pos.x) > Mathf.Abs(cameraMaxPos.x) + 1f || Mathf.Abs(pos.y) > Mathf.Abs(cameraMaxPos.y) + 1f);
+
+		if (!OnScreen()) {
 			// if off screen by one unit
 
 			if (pos.x > cameraMaxPos.x) {
@@ -166,6 +168,17 @@ public class PlayerHudDisplayer : MonoBehaviour {
 
 	public void DestroyElements () {
 		Destroy (arrow);
+	}
+
+	public bool OnScreen() {
+		Vector2 cameraMaxPos = new Vector2 (
+			cam.transform.position.x + cam.GetComponent<CameraController> ().bounds.x,
+			cam.transform.position.y + cam.GetComponent<CameraController> ().bounds.y
+		);
+
+		Vector3 pos = transform.position;
+
+		return !(Mathf.Abs(pos.x) > Mathf.Abs(cameraMaxPos.x) + 1f || Mathf.Abs(pos.y) > Mathf.Abs(cameraMaxPos.y) + 1f);
 	}
 	#endregion
 }

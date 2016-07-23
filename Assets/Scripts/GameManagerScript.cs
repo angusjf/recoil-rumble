@@ -126,17 +126,15 @@ public class GameManagerScript : MonoBehaviour {
 		// p1
 		playerOne = Instantiate (playerPrefab) as GameObject;
 		playerOne.GetComponent<PlayerController> ().m_playerNumber = 1;
-		playerOne.GetComponent<PlayerController>().Respawn();
 		// p2
 		playerTwo = Instantiate (playerPrefab) as GameObject;
 		playerTwo.GetComponent<PlayerController> ().m_playerNumber = 2;
-		playerTwo.GetComponent<PlayerController>().Respawn();
 
 		//make a new one
 		gameStarted = true;
 		gameOver = false;
-		playerOne.SetActive(true);
-		playerTwo.SetActive(true);
+		playerTwo.GetComponent<PlayerController>().Spawn();
+		playerOne.GetComponent<PlayerController>().Spawn();
 	}
 
 	void Pause () {	
@@ -185,9 +183,11 @@ public class GameManagerScript : MonoBehaviour {
 		//gets a random pos, tries to be different
 		Vector3 newPos = respawnPositions[Random.Range(0, respawnPositions.Count)];//TODO
 		if (newPos == lastRespawnPos) {
-			return respawnPositions[Random.Range(0, respawnPositions.Count)];//TODO
+			lastRespawnPos = respawnPositions[Random.Range(0, respawnPositions.Count)];
+			return lastRespawnPos;
 		} else {
-			return newPos;
+			lastRespawnPos = newPos;
+			return lastRespawnPos;
 		}
 	}
 

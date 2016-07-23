@@ -38,12 +38,7 @@ public class GunController : MonoBehaviour {
 	}
 	
 	public virtual void Update () {
-
-		if (owner.GetComponent<PlayerController>().m_onGround) {
-			Reload();
-		}
-
-		if (Input.GetButtonDown(owner.GetComponent<PlayerController>().m_fireButton) && ammo > 0 && owner.GetComponent<PlayerController>().m_hasControl) {
+		if (Input.GetButtonDown(owner.GetComponent<PlayerController>().m_fireButton) && owner.GetComponent<PlayerController>().m_hasControl) {
 			Shoot ();
 			owner.GetComponent<PlayerHudDisplayer>().StartCoroutine("ShowAmmo");
 		}
@@ -56,19 +51,23 @@ public class GunController : MonoBehaviour {
 
 
 	public virtual void Shoot() {
-		//make a bullet
-		GameObject newBullet = Instantiate(bullet, transform.position, Quaternion.identity) as GameObject;
-		//fire in that direction
-		newBullet.GetComponent<BulletController>().direction = shootVector;
-		//lil bit of spin
-		newBullet.GetComponent<BulletController>().direction += new Vector3(Random.Range(-maxInaccuracy, maxInaccuracy),Random.Range(-maxInaccuracy, maxInaccuracy),0);
-		//set who it belongs to
-		newBullet.GetComponent<BulletController>().owner = owner;
+		if (ammo > 0) {
+			//make a bullet
+			GameObject newBullet = Instantiate(bullet, transform.position, Quaternion.identity) as GameObject;
+			//fire in that direction
+			newBullet.GetComponent<BulletController>().direction = shootVector;
+			//lil bit of spin
+			newBullet.GetComponent<BulletController>().direction += new Vector3(Random.Range(-maxInaccuracy, maxInaccuracy),Random.Range(-maxInaccuracy, maxInaccuracy),0);
+			//set who it belongs to
+			newBullet.GetComponent<BulletController>().owner = owner;
 
-		//take away ammo
-		ammo --;
-		//effects
-		StartCoroutine("ShootFx");
+			//take away ammo if not on screen
+			if (!owner.GetComponent<PlayerHudDisplayer>().OnScreen()) {
+				ammo--;
+			}
+			//effects
+			StartCoroutine("ShootFx");
+		}
 	}
 
 	public virtual IEnumerator ShootFx () {
@@ -93,7 +92,7 @@ public class GunController : MonoBehaviour {
 		transform.position -= recoilDistance;
 	}
 
-	void Reload () {
+	public void Reload () {
 		ammo = maxAmmo;//TODO
 	}
 
