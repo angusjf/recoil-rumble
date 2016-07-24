@@ -4,35 +4,32 @@ using System.Collections;
 public class BulletController : MonoBehaviour {
 	
 	Rigidbody2D rb;
-	public Vector3 direction;
-	float speed = 15f;
-	float hitForce = 2f;
+	public Vector3 velocity;
+	float hitForce = 0.07f;
 	public GameObject owner;
 
 	public string solid;
-	Vector3 v, a;
 
 	void Start () {
 		rb = GetComponent<Rigidbody2D>();
-		v = direction * speed + new Vector3(0, owner.GetComponent<PlayerController> ().m_currentVelocity.y, 0);
-		a = Vector3.zero;
+		rb.velocity = velocity;
 
-		Destroy(gameObject,2f);
-
+		//rotation
+		Vector3 direction = Vector3.Normalize(velocity);
 		float r = Mathf.Atan2(direction.y,direction.x) * Mathf.Rad2Deg; 
 		transform.rotation = Quaternion.Euler(new Vector3(0,0,r));;
-	}
-	
-	void FixedUpdate () {
-		rb.velocity = v;
-		v += a;
+
+		Destroy(gameObject,2f);
 	}
 
 	void OnTriggerEnter2D (Collider2D other) {
-		if (other.gameObject.tag == solid) {
+		if (other.gameObject.tag == solid) {				// HIT WALL 
+
 			Destroy(gameObject, 0f); //delete bullet
-			speed = 0f; // ?
-		} else if (other.gameObject != owner && other.gameObject.tag.Contains("Player")) {
+			rb.velocity = Vector3.zero; // stop bullet
+			// explode TODO
+
+		} else if (other.gameObject != owner && other.gameObject.tag.Contains("Player")) {		//HIT PERSON
 			// only do this if its not already dead
 			if (other.gameObject.GetComponent<PlayerController>().m_isAlive) {
 				// do damage / fx
@@ -44,10 +41,10 @@ public class BulletController : MonoBehaviour {
 			}
 
 			// bullet hit back
-			if (other.GetComponent<PlayerController>().m_onGround && direction.y < 0) {
-				direction.y = -direction.y;
+			if (other.GetComponent<PlayerController>().m_onGround && velocity.y < 0) {
+				velocity.y = -velocity.y;
 			}
-			other.GetComponent<PlayerController>().AddForce(direction * hitForce);
+			other.GetComponent<PlayerController>().AddForce(velocity * hitForce);
 
 			// hit sound / Explosion? HACK - TODO move to bullet 
 			owner.GetComponent<PlayerController>().PlaySound(2); // can cause error null ref

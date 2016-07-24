@@ -13,6 +13,7 @@ public class GunController : MonoBehaviour {
 	public int maxAmmo = 3;
 	float maxInaccuracy = 0.05f;
 	float recoilForce = 0.3f;
+	float shootForce = 20f;
 
 	private bool upButton, leftButton, downButton, rightButton;
 
@@ -45,28 +46,43 @@ public class GunController : MonoBehaviour {
 
 		if (Input.GetKeyDown(KeyCode.U)) isHeld = !isHeld;
 
+		if (ammo != maxAmmo && owner.GetComponent<PlayerHudDisplayer>().OnScreen()) {
+			ammo = maxAmmo;
+		}
+
 		SetShootDir();
 		SetRotation();
 	}
-
 
 	public virtual void Shoot() {
 		if (ammo > 0) {
 			//make a bullet
 			GameObject newBullet = Instantiate(bullet, transform.position, Quaternion.identity) as GameObject;
 			//fire in that direction
-			newBullet.GetComponent<BulletController>().direction = shootVector;
-			//lil bit of spin
-			newBullet.GetComponent<BulletController>().direction += new Vector3(Random.Range(-maxInaccuracy, maxInaccuracy),Random.Range(-maxInaccuracy, maxInaccuracy),0);
+			newBullet.GetComponent<BulletController>().velocity = shootVector * shootForce;
+
+			//lil bit of spin NO MORE
+			//newBullet.GetComponent<BulletController>().direction += new Vector3(Random.Range(-maxInaccuracy, maxInaccuracy),Random.Range(-maxInaccuracy, maxInaccuracy),0);
+
+			//autoaim??? NO MORE
+			//Vector3 rPos = Vector3.Normalize(GameObject.FindWithTag("Player2").transform.position - transform.position);
+			//newBullet.GetComponent<BulletController>().direction += rPos;
+
+			//give bullet players velocity
+			//if (newBullet.GetComponent<BulletController>().n) {
+				newBullet.GetComponent<BulletController>().velocity += owner.GetComponent<PlayerController>().m_currentVelocity;
+			//}
+
 			//set who it belongs to
 			newBullet.GetComponent<BulletController>().owner = owner;
 
 			//take away ammo if not on screen
-			if (!owner.GetComponent<PlayerHudDisplayer>().OnScreen()) {
-				ammo--;
-			}
+			ammo--;
 			//effects
 			StartCoroutine("ShootFx");
+		} else {
+			//player cant shoot
+			//click sound effect
 		}
 	}
 

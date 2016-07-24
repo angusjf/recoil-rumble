@@ -10,6 +10,7 @@ public class UiButtonScript : MonoBehaviour {
 	#endregion
 	#region state
 	private bool selected = false;
+	private bool pressed = false;
 	private GameObject text;
 	private bool isUiAction;
 	private string actionName;
@@ -41,7 +42,7 @@ public class UiButtonScript : MonoBehaviour {
 	void Update () {
 		if (selected) {
 			//press
-			if (Input.GetKeyDown(GameManagerScript.CONFIRM_KEY)) {
+			if (Input.GetKeyDown(GameManagerScript.CONFIRM_KEY) && !pressed) {
 				StartCoroutine(Press());
 			}
 			//move up / down
@@ -68,6 +69,7 @@ public class UiButtonScript : MonoBehaviour {
 
 	IEnumerator Press() {
 		sr.sprite = pressedSprite;
+		pressed = true;
 		text.transform.position += new Vector3 (0, -0.17f); // TODO exact number
 		for (int i = 0; i < 10; i++) {yield return null;}
 		if (isUiAction) {
