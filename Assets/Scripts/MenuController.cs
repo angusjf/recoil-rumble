@@ -105,8 +105,8 @@ public class MenuController : MonoBehaviour {
 				HideMenu();
 				break;
 			case "timed":
-				gameManagerScript.StartGame();
-				HideMenu();
+				//gameManagerScript.StartGame(); TODO
+				//HideMenu(); TODO
 				break;
 			case "web":
 				Application.OpenURL("http://findlang.github.io/");

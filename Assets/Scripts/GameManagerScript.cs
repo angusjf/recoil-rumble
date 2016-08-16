@@ -18,7 +18,7 @@ public class GameManagerScript : MonoBehaviour {
 	private Vector3 offset = new Vector3(-9.75f,7.25f,0);
 
 	public static List<Vector3> respawnPositions = new List<Vector3>();
-	private Vector3 lastRespawnPos;
+	private int nextRespawnPositionCounter = 0;
 
 	private MenuController menu;
 
@@ -180,15 +180,9 @@ public class GameManagerScript : MonoBehaviour {
 	}
 
 	public Vector3 GetRandomRespawnPos () {
-		//gets a random pos, tries to be different
-		Vector3 newPos = respawnPositions[Random.Range(0, respawnPositions.Count)];//TODO
-		if (newPos == lastRespawnPos) {
-			lastRespawnPos = respawnPositions[Random.Range(0, respawnPositions.Count)];
-			return lastRespawnPos;
-		} else {
-			lastRespawnPos = newPos;
-			return lastRespawnPos;
-		}
+		if (nextRespawnPositionCounter >= respawnPositions.Count)
+			nextRespawnPositionCounter = 0;
+		return respawnPositions[nextRespawnPositionCounter++];
 	}
 
 	private Vector3 getLevelPos(int x, int y) {

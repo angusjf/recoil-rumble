@@ -42,10 +42,34 @@
 			float4 frag(v2f i) : SV_Target
 			{
 				float4 col = tex2D(_MainTex, i.uv);
-				col += float4(0, 0.2, 0.2, 1); //more blue
-				col *= float4(1.1, 1.3, 1.3, 1); // more contrast
+				//col += float4(0, 0.2, 0.2, 1); //more blue
+				//col *= float4(1.1, 1.3, 1.3, 1); // more contrast
+				if (col.x == 1 && col.y == 1 && col.z == 1) {
+					//white
+					col.x = 1;
+					col.y = 1;
+					col.z = 1;
+				} 
+				if (col.x == 1 && col.y == 0 && col.z == 0) {
+					//red
+					col.x = 1;
+					col.y = 0.4;
+					col.z = 0.4;
+				}
+				if (col.x == 0 && col.y == 0 && col.z == 1) {
+					//blue
+					col.x = 0;
+					col.y = 0.7;
+					col.z = 0.9;
+				}
+				if (col.x == 0 && col.y == 0 && col.z == 0) {
+					col.x = 0.2;
+					col.y = 0.3;
+					col.z = 0.4;
+				}
 				return col;
 			}
+
 			ENDCG
 		}
 	}

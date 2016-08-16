@@ -8,15 +8,12 @@ public class PlayerHudDisplayer : MonoBehaviour {
 	GameObject cam;
 
 	public GameObject scoreCounterPrefab;
-	public GameObject ammoCounterPrefab;
 	public GameObject arrowPrefab;
 		
 	GameObject[] scoreCounters;
-	GameObject[] ammoCounters;
 	GameObject arrow;
 
 	public Sprite[] starSprites = new Sprite[2];
-	public Sprite[] ammoSprites = new Sprite[2];
 	#endregion
 
 	#region MonoBehaviour
@@ -34,15 +31,6 @@ public class PlayerHudDisplayer : MonoBehaviour {
 			scoreCounters[i].GetComponent<SpriteRenderer>().enabled = false;
 		}
 
-		//ammo
-		ammoCounters = new GameObject[gc.maxAmmo];
-		for (int i = 0; i < ammoCounters.Length; i ++) {
-			ammoCounters[i] = Instantiate(ammoCounterPrefab) as GameObject;
-			ammoCounters[i].transform.position = transform.position + new Vector3(-0.35f, i * 0.21875f - 0.21875f * (ammoCounters.Length - 1f) / 2, 0);
-			ammoCounters[i].transform.parent = transform;
-			ammoCounters[i].GetComponent<SpriteRenderer>().enabled = false;
-		}
-
 		//arrow
 		arrow = Instantiate(arrowPrefab) as GameObject;
 		arrow.GetComponent<SpriteRenderer>().color = pc.m_playerColor;
@@ -50,16 +38,7 @@ public class PlayerHudDisplayer : MonoBehaviour {
 	
 	void Update () {
 		UpdateCounterVisiblity();
-		UpdateAmmoCountVisiblity();
 		UpdateArrowPosition();
-	
-		for (int i = 0; i < ammoCounters.Length; i++) {
-			ammoCounters[i].transform.localPosition = new Vector3 (
-				-Mathf.Abs(ammoCounters[i].transform.localPosition.x) * Mathf.Sign(pc.m_lastDirection),
-				ammoCounters[i].transform.localPosition.y,
-				0
-			);
-		}
 	}
 	#endregion
 
@@ -76,19 +55,6 @@ public class PlayerHudDisplayer : MonoBehaviour {
 			scoreCounters[i].GetComponent<SpriteRenderer>().sprite = starSprites[0];
 		}
 
-	}
-
-	void UpdateAmmoCountVisiblity () {
-		if (gc.ammo > ammoCounters.Length) return;
-
-		//enable counters that need to be
-		for (int i = 0; i < gc.ammo; i ++) {
-			ammoCounters[i].GetComponent<SpriteRenderer>().sprite = ammoSprites[1];
-		}
-		//disable others
-		for (int i = ammoCounters.Length - 1; i >= gc.ammo; i --) {
-			ammoCounters[i].GetComponent<SpriteRenderer>().sprite = ammoSprites[0];
-		}
 	}
 
 	void UpdateArrowPosition () {
@@ -142,17 +108,6 @@ public class PlayerHudDisplayer : MonoBehaviour {
 		}
 	}
 
-	public IEnumerator SetAmmoVisiblity (bool visible, float timeVisible) {
-		for (int i = 0; i < ammoCounters.Length; i ++) {
-			ammoCounters[i].GetComponent<SpriteRenderer>().enabled = visible;
-		}
-
-		if (visible) {
-			yield return new WaitForSeconds (timeVisible);
-			StartCoroutine(SetAmmoVisiblity(false,0f));
-		}
-	}
-
 	public IEnumerator BounceScore () {
 		StartCoroutine(SetScoreVisibilty(true, 1f));
 		yield return new WaitForSeconds (0.2f);
@@ -160,10 +115,6 @@ public class PlayerHudDisplayer : MonoBehaviour {
 			scoreCounters[pc.m_score - 1].transform.position += (i < 5 ? 0.05f : -0.05f) * Vector3.up;
 			yield return null;
 		}
-	}
-
-	public void ShowAmmo () {
-		StartCoroutine(SetAmmoVisiblity(true, 1f));
 	}
 
 	public void DestroyElements () {

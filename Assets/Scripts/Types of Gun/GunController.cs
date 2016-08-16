@@ -41,7 +41,6 @@ public class GunController : MonoBehaviour {
 	public virtual void Update () {
 		if (Input.GetButtonDown(owner.GetComponent<PlayerController>().m_fireButton) && owner.GetComponent<PlayerController>().m_hasControl) {
 			Shoot ();
-			owner.GetComponent<PlayerHudDisplayer>().StartCoroutine("ShowAmmo");
 		}
 
 		if (Input.GetKeyDown(KeyCode.U)) isHeld = !isHeld;
@@ -57,16 +56,16 @@ public class GunController : MonoBehaviour {
 	public virtual void Shoot() {
 		if (ammo > 0) {
 			//make a bullet
-			GameObject newBullet = Instantiate(bullet, transform.position, Quaternion.identity) as GameObject;
+			GameObject newBullet = Instantiate(bullet, owner.transform.position, Quaternion.identity) as GameObject;
 			//fire in that direction
 			newBullet.GetComponent<BulletController>().velocity = shootVector * shootForce;
 
 			//lil bit of spin NO MORE
 			//newBullet.GetComponent<BulletController>().direction += new Vector3(Random.Range(-maxInaccuracy, maxInaccuracy),Random.Range(-maxInaccuracy, maxInaccuracy),0);
 
-			//autoaim??? NO MORE
-			//Vector3 rPos = Vector3.Normalize(GameObject.FindWithTag("Player2").transform.position - transform.position);
-			//newBullet.GetComponent<BulletController>().direction += rPos;
+			//autoaim???
+			Vector3 rPos = Vector3.Normalize(GameObject.FindWithTag("Player2").transform.position - transform.position);
+			newBullet.GetComponent<BulletController>().velocity += rPos;
 
 			//give bullet players velocity
 			//if (newBullet.GetComponent<BulletController>().n) {
@@ -87,8 +86,13 @@ public class GunController : MonoBehaviour {
 	}
 
 	public virtual IEnumerator ShootFx () {
-		//recoil
-		owner.GetComponent<PlayerController>().AddForce (-shootVector * recoilForce);
+		// RECOIL
+		if (owner.GetComponent<PlayerController>().m_onGround && shootVector.y > 0) { //shooting on the ground
+			owner.GetComponent<PlayerController>().AddForce (new Vector3(-shootVector.x * recoilForce + Random.Range(-recoilForce, recoilForce), -shootVector.y * recoilForce, 0));
+		} else {
+			owner.GetComponent<PlayerController>().AddForce (-shootVector * recoilForce);
+		}
+
 		//screenshake
 		cameraController.StartScreenShake(0.1f,2);
 		//make sound
