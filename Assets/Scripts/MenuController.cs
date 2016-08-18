@@ -11,8 +11,11 @@ public class MenuController : MonoBehaviour {
 	public GameObject imagePrefab;
 	public GameObject buttonPrefab;
 
-	public Sprite titleImage, mapsTitleImage, modesTitleImage, twitterImage1, twitterImage2;
-	public Sprite[] wordSprites = new Sprite[8];
+	public Sprite titleImage, mapsTitleImage, modesTitleImage, twitterImage1, twitterImage2,
+		pausedImage, player1WinImage, player2WinImage, optionsTitleImage, creditsTitleImage;
+	public Sprite[] wordSprites;
+	public Sprite[] redTallySprites;
+	public Sprite[] blueTallySprites;
 
 	enum MenuPage {
 		MAIN,
@@ -144,6 +147,12 @@ public class MenuController : MonoBehaviour {
 			case "quit":
 				Application.Quit ();
 				break;
+			case "retry":
+				print("retry not implemented yet");
+				break;
+			case "stop-game":
+				print("stop game not implemented yet");
+				break;
 			default:
 				break;
 		}
@@ -169,95 +178,83 @@ public class MenuController : MonoBehaviour {
 		//Instantiate a credits button
 		CreateButton(new Vector3(0,-2f, 0), true, "credits", uiElements[uiElements.Count - 1], 2);
 		//Instantiate a exit button
-		CreateButton(new Vector3(0,-3f, 0), false, "quit", uiElements[uiElements.Count -  1], 3);
+		CreateButton(new Vector3(0,-3f, 0), false, "quit", uiElements[uiElements.Count - 1], 3);
 	}
 
 	private void ShowPlayMenu () {			//PLAY
 		CreateImage(new Vector3(0,3f,0), mapsTitleImage);
 		//Instanciate buttons for the maps
 		CreateButton(new Vector3(-6,0f, 0), false, "map0", null, 0);
-		CreateButton(new Vector3(-2,0f, 0), false, "map1", uiElements[uiElements.Count -  1], 0);
-		CreateButton(new Vector3(2,0f, 0), false, "map2", uiElements[uiElements.Count -  1], 0);
-		CreateButton(new Vector3(6,0f, 0), false, "map3", uiElements[uiElements.Count -  1], 0);
+		CreateButton(new Vector3(-2,0f, 0), false, "map1", uiElements[uiElements.Count - 1], 0);
+		CreateButton(new Vector3(2,0f, 0), false, "map2", uiElements[uiElements.Count - 1], 0);
+		CreateButton(new Vector3(6,0f, 0), false, "map3", uiElements[uiElements.Count - 1], 0);
 		//Instanciate a back button
-		CreateButton(new Vector3(0,-4f, 0), true, "main", uiElements[uiElements.Count -  1], 6);
+		CreateButton(new Vector3(0,-4f, 0), true, "main", uiElements[uiElements.Count - 1], 6);
 	}
 
-	private void ShowModeMenu () {			//PLAY
+	private void ShowModeMenu () {			//MODE
 		CreateImage(new Vector3(0,3f,0), modesTitleImage);
 		//Instanciate a points mode button
 		CreateButton(new Vector3(0,0f, 0), false, "points", null, 4);
 		//Instanciate a time mode button
-		CreateButton(new Vector3(0,-1f, 0), false, "timed", uiElements[uiElements.Count -  1], 5);
+		CreateButton(new Vector3(0,-1f, 0), false, "timed", uiElements[uiElements.Count - 1], 5);
 		//Instanciate a back button
-		CreateButton(new Vector3(0,-2f, 0), true, "play", uiElements[uiElements.Count -  1], 6);
+		CreateButton(new Vector3(0,-2f, 0), true, "play", uiElements[uiElements.Count - 1], 6);
 	}
 
 	private void ShowOptionsMenu () {		//OPTIONS
+		//title
+		CreateImage(new Vector3(0,3f,0), optionsTitleImage);
 		//Instanciate a back button
-		CreateButton(new Vector3(0,-0f, 0), true, "main", null /*uiElements[uiElements.Count -  1]*/, 6);
+		CreateButton(new Vector3(0,-0f, 0), true, "main", null /*uiElements[uiElements.Count - 1]*/, 6);
 	}
 
 	private void ShowControlsMenu () {			//CONTROLS
 		//Instanciate a back button
-		CreateButton(new Vector3(0,-0f, 0), true, "main", null /*uiElements[uiElements.Count -  1]*/, 6);
+		CreateButton(new Vector3(0,-0f, 0), true, "main", null /*uiElements[uiElements.Count - 1]*/, 6);
 	}
 
 	private void ShowCreditsMenu () {		//CREDITS
+		//title
+		CreateImage(new Vector3(0,3f,0), creditsTitleImage);
 		//Instaticate credit image
-		CreateImage(new Vector3(0,0f,0), twitterImage1);
+		CreateImage(new Vector3(0,1.8f,0), twitterImage1);
 		//Instaticate credit image
-		CreateImage(new Vector3(0,-1f,0), twitterImage2); //TODO
+		CreateImage(new Vector3(0,1f,0), twitterImage2);
 		//Instanciate a back button
-		CreateButton(new Vector3(0,-2f, 0), false, "web", null, 7);
+		CreateButton(new Vector3(0,0f, 0), false, "web", null, 7);
 		//Instanciate a back button
-		CreateButton(new Vector3(0,-3f, 0), true, "main", uiElements[uiElements.Count -  1], 6);
+		CreateButton(new Vector3(0,-1f, 0), true, "main", uiElements[uiElements.Count - 1], 6);
 	}
 
 	private void ShowPauseMenu () {		//PAUSE
+		//Instantiate pause image
+		CreateImage(new Vector3(0,2f,0), pausedImage);
 		//TODO RESUME
 		//TODO RESTART
 		//TODO MENU
-		CreateButton(new Vector3(0,-0f, 0), true, "play", null /*uiElements[uiElements.Count -  1]*/, 0);
-		CreateButton(new Vector3(0,-1f, 0), true, "main", null /*uiElements[uiElements.Count -  1]*/, 6);
+		CreateButton(new Vector3(0,0f, 0), false, "retry", null /*uiElements[uiElements.Count - 1]*/, 0);
+		CreateButton(new Vector3(0,-1f, 0), false, "stop-game", uiElements[uiElements.Count - 1], 6);
 	}
 
 	private void ShowEndMenu () {		//END
-		//score 1 TODO
-		//score 2 TODO
-		CreateButton(new Vector3(0,-2f, 0), false, "points", null, 8); //TODO change it to current mode eg "timed"
-		CreateButton(new Vector3(0,-3f, 0), true, "main", uiElements[uiElements.Count -  1], 9);
-		/*
 		// Title Image
-		uiElements.Add(Instantiate (titleImagePrefab) as GameObject);
-		if (GameManagerScript.lastWinner == null) {
-			uiElements[0].GetComponent<SpriteRenderer> ().sprite = titleSprites [0];
+	    if (GameManagerScript.lastWinner == "Player1") {
+	    	CreateImage(new Vector3(0,2f,0), player1WinImage);
+		} else if (GameManagerScript.lastWinner == "Player2") {
+			CreateImage(new Vector3(0,2f,0), player2WinImage);
 		} else {
-			uiElements[0].GetComponent<SpriteRenderer> ().sprite = GameManagerScript.lastWinner == "Player1" ? titleSprites [1] : titleSprites [2];
+			//no winner...
 		}
+		//score 1 TODO
+		CreateImage(new Vector3(-3,-1.2f,0),
+			redTallySprites[gameManagerScript.GetPlayer(1).GetComponent<PlayerController>().m_score]);
 
-		// Ready Buttons
-		// ReadyOne
-		uiElements.Add(Instantiate (readyButtonPrefab) as GameObject);
-		uiElements[1].transform.position = Vector3.right * 3;
-		uiElements.Add(Instantiate (readyButtonPrefab) as GameObject);
-		uiElements[2].transform.position = Vector3.left * 3;
+		//score 2 TODO
+		CreateImage(new Vector3(3,-1.2f,0),
+			blueTallySprites[gameManagerScript.GetPlayer(2).GetComponent<PlayerController>().m_score]);
 
-		// Tally Images
-		uiElements.Add(Instantiate (tallyImagePrefab) as GameObject);		
-		if (GameManagerScript.playerOneWins < 1  TODO || GameManagerScript.playerOneWins > tornament lengthghh ) {
-			uiElements[3].GetComponent<SpriteRenderer> ().enabled = false;
-		} else {
-			uiElements[3].GetComponent<SpriteRenderer> ().enabled = true;
-			uiElements[3].GetComponent<SpriteRenderer> ().sprite = tally1Sprites[GameManagerScript.playerOneWins - 1];
-		}
-		uiElements.Add(Instantiate (tallyImagePrefab) as GameObject);		
-		if (GameManagerScript.playerTwoWins < 1) {
-			uiElements[4].GetComponent<SpriteRenderer> ().enabled = false;
-		} else {
-			uiElements[4].GetComponent<SpriteRenderer> ().enabled = true;
-			uiElements[4].GetComponent<SpriteRenderer> ().sprite = tally2Sprites[GameManagerScript.playerTwoWins - 1];
-		}
-		*/
+		CreateButton(new Vector3(0,-3f, 0), false, "points", null, 8); //TODO change it to current mode eg "timed"
+		CreateButton(new Vector3(0,-4f, 0), true, "main", uiElements[uiElements.Count - 1], 9);
 	}
 }
