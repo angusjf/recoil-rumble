@@ -22,16 +22,19 @@ public class GameManagerScript : MonoBehaviour {
 
 	private MenuController menu;
 
-	public int currentMapNumber = 2; //TODO change from 1
+	public bool timedMode;
+	public int currentMapNumber;
 	int[,] currentMap = new int[30,40];
 	#endregion
 
 	#region constants
-	public const KeyCode CONFIRM_KEY = KeyCode.Return;
-	public const KeyCode CANCEL_KEY = KeyCode.Backspace;
-	public const KeyCode UP_KEY = KeyCode.UpArrow;
-	public const KeyCode DOWN_KEY = KeyCode.DownArrow;
-	public const KeyCode PAUSE_KEY = KeyCode.P;
+	//UI
+	public const string CONFIRM_BUTTON = "MenuConfirm";
+	public const string CANCEL_BUTTON = "MenuCancel";
+	public const string UP_BUTTON = "MenuUp";
+	public const string DOWN_BUTTON = "MenuDown";
+	//In Game
+	public const string PAUSE_BUTTON = "Pause";
 	#endregion
 
 	void Awake () {
@@ -45,7 +48,7 @@ public class GameManagerScript : MonoBehaviour {
 	void Update () {
 		if (gameStarted && !gameOver) {
 			//INPUT - PAUSE
-			if (Input.GetKey (GameManagerScript.PAUSE_KEY)) {
+			if (Input.GetButtonDown (GameManagerScript.PAUSE_BUTTON)) {
 				Pause ();
 			}
 
@@ -56,8 +59,6 @@ public class GameManagerScript : MonoBehaviour {
 				GameOver(playerTwo);
 			}
 
-			if (Input.GetKeyDown(KeyCode.M)) ToggleMuted();
-			
 			if (playerOne.transform.position.y < -50f) {
 				playerOne.GetComponent<PlayerController>().Respawn();
 			} else if (playerTwo.transform.position.y < -50f) {
@@ -149,7 +150,7 @@ public class GameManagerScript : MonoBehaviour {
 		}
 	}
 
-	void ToggleMuted () {
+	void ToggleMuted () { //TODO implement
 		playerOne.GetComponent<AudioSource>().mute = !playerOne.GetComponent<AudioSource>().mute;
 		playerTwo.GetComponent<AudioSource>().mute = !playerTwo.GetComponent<AudioSource>().mute;
 	}

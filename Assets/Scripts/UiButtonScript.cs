@@ -38,24 +38,28 @@ public class UiButtonScript : MonoBehaviour {
 			previousElement.GetComponent<UiButtonScript>().SetNextElement(this.gameObject); //linked list
 		}
 	}
-	
+
+	static bool actionThisFrame; //FIX
 	void Update () {
 		if (selected) {
 			//press
-			if (Input.GetKeyDown(GameManagerScript.CONFIRM_KEY) && !pressed) {
+			if (Input.GetButtonDown(GameManagerScript.CONFIRM_BUTTON) && !pressed) {
 				StartCoroutine(Press());
 			}
 			//move up / down
-			if (Input.GetKeyDown (GameManagerScript.DOWN_KEY) && nextElement != null) {
-				nextElement.GetComponent<UiButtonScript> ().Select (); //BROKEN why
+			if (Input.GetButtonDown(GameManagerScript.UP_BUTTON) && previousElement != null) {
+				previousElement.GetComponent<UiButtonScript> ().Select ();
 				Deselect();
 			}
-			if (Input.GetKeyDown (GameManagerScript.UP_KEY) && previousElement != null) {
-				previousElement.GetComponent<UiButtonScript> ().Select ();
+			if (Input.GetButtonDown(GameManagerScript.DOWN_BUTTON) && nextElement != null && !actionThisFrame) {
+				nextElement.GetComponent<UiButtonScript> ().Select (); //BROKEN
+				actionThisFrame = true; //FIX
 				Deselect();
 			}
 		}
 	}
+
+	void LateUpdate () { actionThisFrame = false; }
 
 	void Select() {
 		sr.sprite = selectedSprite;

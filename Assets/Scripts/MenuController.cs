@@ -11,14 +11,13 @@ public class MenuController : MonoBehaviour {
 	public GameObject imagePrefab;
 	public GameObject buttonPrefab;
 
-	public Sprite titleImage;
-	public Sprite twitterImage1;
-	public Sprite twitterImage2;
+	public Sprite titleImage, mapsTitleImage, modesTitleImage, twitterImage1, twitterImage2;
 	public Sprite[] wordSprites = new Sprite[8];
 
 	enum MenuPage {
 		MAIN,
 			PLAY,
+				MODE,
 			OPTIONS,
 				CONTROLS,
 			CREDITS,
@@ -37,6 +36,9 @@ public class MenuController : MonoBehaviour {
 				break;
 			case "play":
 				currentPage = MenuPage.PLAY;
+				break;
+			case "modes":
+				currentPage = MenuPage.MODE;
 				break;
 			case "options":
 				currentPage = MenuPage.OPTIONS;
@@ -71,6 +73,9 @@ public class MenuController : MonoBehaviour {
 			case MenuPage.PLAY:
 				ShowPlayMenu();
 				break;
+			case MenuPage.MODE:
+				ShowModeMenu();
+				break;
 			case MenuPage.OPTIONS:
 				ShowOptionsMenu();
 				break;
@@ -101,12 +106,30 @@ public class MenuController : MonoBehaviour {
 	public void StartUiAction(string action) { //for doing things like pause
 		switch (action) {
 			case "points":
-				gameManagerScript.StartGame();
+				gameManagerScript.timedMode = false;
+				gameManagerScript.StartGame(); //TODO
 				HideMenu();
 				break;
 			case "timed":
-				//gameManagerScript.StartGame(); TODO
-				//HideMenu(); TODO
+				gameManagerScript.timedMode = true;
+				gameManagerScript.StartGame(); //TODO
+				HideMenu();
+				break;
+			case "map0":
+				gameManagerScript.currentMapNumber = 0;
+				OpenMenu("modes");
+				break;
+			case "map1":
+				gameManagerScript.currentMapNumber = 1;
+				OpenMenu("modes");
+				break;
+			case "map2":
+				gameManagerScript.currentMapNumber = 2;
+				OpenMenu("modes");
+				break;
+			case "map3":
+				gameManagerScript.currentMapNumber = 3;
+				OpenMenu("modes");
 				break;
 			case "web":
 				Application.OpenURL("http://findlang.github.io/");
@@ -150,6 +173,18 @@ public class MenuController : MonoBehaviour {
 	}
 
 	private void ShowPlayMenu () {			//PLAY
+		CreateImage(new Vector3(0,3f,0), mapsTitleImage);
+		//Instanciate buttons for the maps
+		CreateButton(new Vector3(-6,0f, 0), false, "map0", null, 0);
+		CreateButton(new Vector3(-2,0f, 0), false, "map1", uiElements[uiElements.Count -  1], 0);
+		CreateButton(new Vector3(2,0f, 0), false, "map2", uiElements[uiElements.Count -  1], 0);
+		CreateButton(new Vector3(6,0f, 0), false, "map3", uiElements[uiElements.Count -  1], 0);
+		//Instanciate a back button
+		CreateButton(new Vector3(0,-4f, 0), true, "main", uiElements[uiElements.Count -  1], 6);
+	}
+
+	private void ShowModeMenu () {			//PLAY
+		CreateImage(new Vector3(0,3f,0), modesTitleImage);
 		//Instanciate a points mode button
 		CreateButton(new Vector3(0,0f, 0), false, "points", null, 4);
 		//Instanciate a time mode button
@@ -169,10 +204,10 @@ public class MenuController : MonoBehaviour {
 	}
 
 	private void ShowCreditsMenu () {		//CREDITS
-		//TODO Instaticate title image
+		//Instaticate credit image
 		CreateImage(new Vector3(0,0f,0), twitterImage1);
-		//TODO Instaticate title image
-		//CreateImage(new Vector3(0,-1f,0), twitterImage2); //TODO
+		//Instaticate credit image
+		CreateImage(new Vector3(0,-1f,0), twitterImage2); //TODO
 		//Instanciate a back button
 		CreateButton(new Vector3(0,-2f, 0), false, "web", null, 7);
 		//Instanciate a back button

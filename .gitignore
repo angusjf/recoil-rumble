@@ -20,11 +20,11 @@ obj/
 *.booproj
 
 # stuff i (angus) added 
-*.png
-*.meta
-*.asset
-*.prefab
-*.wav
+#*.png
+#*.meta
+#*.asset
+#*.prefab
+#*.wav
 
 # ============ #
 # OS generated #
