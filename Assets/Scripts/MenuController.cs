@@ -190,7 +190,7 @@ public class MenuController : MonoBehaviour {
 		//Instanciate a time mode button
 		CreateButton(new Vector3(0,-1f, 0), false, "timed", uiElements[uiElements.Count -  1], 5);
 		//Instanciate a back button
-		CreateButton(new Vector3(0,-2f, 0), true, "main", uiElements[uiElements.Count -  1], 6);
+		CreateButton(new Vector3(0,-2f, 0), true, "play", uiElements[uiElements.Count -  1], 6);
 	}
 
 	private void ShowOptionsMenu () {		//OPTIONS

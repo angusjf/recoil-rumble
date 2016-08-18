@@ -26,7 +26,7 @@ public class PlayerHudDisplayer : MonoBehaviour {
 		scoreCounters = new GameObject[GameManagerScript.winScore];
 		for (int i = 0; i < scoreCounters.Length; i ++) {
 			scoreCounters[i] = Instantiate(scoreCounterPrefab) as GameObject;
-			scoreCounters[i].transform.position = transform.position + new Vector3(i * 0.21875f - (scoreCounters.Length - 1) * 0.21875f / 2, 0.37495f, 0);
+			scoreCounters[i].transform.position = transform.position + new Vector3(i * 0.21875f - (scoreCounters.Length - 1) * 0.21875f / 2, 1.5f*0.37495f, 0);
 			scoreCounters[i].transform.parent = transform;
 			scoreCounters[i].GetComponent<SpriteRenderer>().enabled = false;
 		}

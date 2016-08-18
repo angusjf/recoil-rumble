@@ -20,6 +20,7 @@ obj/
 *.booproj
 
 # stuff i (angus) added 
+Assets/Sprites/old\ sprites
 #*.png
 #*.meta
 #*.asset

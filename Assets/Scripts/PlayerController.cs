@@ -254,7 +254,7 @@ public class PlayerController : MonoBehaviour {
 			m_hasControl = true;
 			m_isAlive = true;
 			m_canMove = true;
-			if (m_score > 0) m_score --;
+			//if (m_score > 0) m_score --;
 			m_currentVelocity = Vector3.zero;
 			TeleportTo (GameObject.FindWithTag ("GameController").GetComponent<GameManagerScript> ().GetRandomRespawnPos ());
 			//TODO meybe respawn effects?
