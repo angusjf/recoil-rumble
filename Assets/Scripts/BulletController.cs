@@ -19,7 +19,7 @@ public class BulletController : MonoBehaviour {
 
 		//rotation
 		Vector3 direction = Vector3.Normalize(velocity);
-		float r = Mathf.Atan2(direction.y,direction.x) * Mathf.Rad2Deg; 
+		float r = Mathf.Atan2(direction.y,direction.x) * Mathf.Rad2Deg + 90f; 
 		transform.rotation = Quaternion.Euler(new Vector3(0,0,r));;
 
 		Destroy(gameObject,2f);

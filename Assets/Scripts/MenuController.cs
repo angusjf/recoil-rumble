@@ -6,6 +6,7 @@ public class MenuController : MonoBehaviour {
 
 	MenuPage currentPage;
 	GameManagerScript gameManagerScript;
+	AudioSource audioSource;
 	
 	List<GameObject> uiElements = new List<GameObject>();
 	public GameObject imagePrefab;
@@ -17,6 +18,9 @@ public class MenuController : MonoBehaviour {
 	public Sprite[] redTallySprites;
 	public Sprite[] blueTallySprites;
 	public Sprite[] mapButtonSprites;
+
+	public AudioClip moveSound;
+	public AudioClip pressSound;
 
 	enum MenuPage {
 		MAIN,
@@ -31,6 +35,7 @@ public class MenuController : MonoBehaviour {
 	
 	void Awake () { //no start needed 
 		gameManagerScript = GameObject.FindWithTag("GameController").GetComponent<GameManagerScript>();
+		audioSource = GetComponent<AudioSource>();
 	}
 
 	public void OpenMenu (string menu) { //ONLY PUBLIC MENU METHOD
@@ -262,5 +267,13 @@ public class MenuController : MonoBehaviour {
 
 		CreateButton(new Vector3(0,-3f, 0), false, "points", null, 8); //TODO change it to current mode eg "timed"
 		CreateButton(new Vector3(0,-4f, 0), true, "main", uiElements[uiElements.Count - 1], 9);
+	}
+
+	public void playSound(string name) {
+		if (name == "move") {
+			audioSource.PlayOneShot(moveSound);
+		} else if (name == "press") {
+			audioSource.PlayOneShot(pressSound);
+		}
 	}
 }
