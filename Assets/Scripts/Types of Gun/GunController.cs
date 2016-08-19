@@ -36,6 +36,8 @@ public class GunController : MonoBehaviour {
 		Reload();
 
 		transform.position = owner.transform.position; // HACK ?
+		//color
+		GetComponent<SpriteRenderer>().color = owner.GetComponent<PlayerController>().m_playerNumber == 1 ? Color.red : Color.blue;
 	}
 	
 	public virtual void Update () {

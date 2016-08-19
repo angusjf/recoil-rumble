@@ -29,6 +29,7 @@ public class PlayerHudDisplayer : MonoBehaviour {
 			scoreCounters[i].transform.position = transform.position + new Vector3(i * 0.21875f - (scoreCounters.Length - 1) * 0.21875f / 2, 1.5f*0.37495f, 0);
 			scoreCounters[i].transform.parent = transform;
 			scoreCounters[i].GetComponent<SpriteRenderer>().enabled = false;
+			scoreCounters[i].GetComponent<SpriteRenderer>().color = pc.m_playerColor;
 		}
 
 		//arrow

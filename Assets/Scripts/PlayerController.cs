@@ -13,7 +13,8 @@ public class PlayerController : MonoBehaviour {
 
 	#region varaibles - Assets
 	public AudioClip[] m_soundEffects; // land, shoot, explosion
-	public Sprite[] m_sprites; //alive, dead, flying
+	public Sprite[] redSprites, blueSprites; //alive, dead, flying
+	Sprite[] m_sprites; //alive, dead, flying
 	public GameObject m_gunPrefab;
 	#endregion
 
@@ -40,15 +41,10 @@ public class PlayerController : MonoBehaviour {
 	#endregion
 
 	#region varaibles - Based on player number / settings
-	[HideInInspector]
 	public int m_playerNumber;
-	[HideInInspector]
 	public Color m_playerColor;
-	[HideInInspector]
 	private bool m_analogControls = false;
-	[HideInInspector]
 	public string m_horizontalAxis, m_verticalAxis, m_fireButton; // controls
-	//[HideInInspector]
 	public GameObject m_playerGun;
 	#endregion
 
@@ -68,10 +64,9 @@ public class PlayerController : MonoBehaviour {
 		m_horizontalAxis = "Horizontal" + m_playerNumber;
 		m_verticalAxis = "Vertical" + m_playerNumber;
 		m_fireButton = "Fire" + m_playerNumber;
-		//HACK TODO m_playerColor = m_playerNumber == 1 ? new Color(0.97f,0.27f,0.23f) : new Color(0.40f,0.84f,0.31f);
-		//change sprite instead TODO
-		m_playerColor = Color.white;
-		m_spriteRenderer.color = m_playerColor;
+		m_sprites = m_playerNumber == 1 ? redSprites : blueSprites;
+		SetSprite(0);
+		m_playerColor = m_playerNumber == 1 ? Color.red : Color.blue;
 		m_particleSystem.startColor = m_playerColor;
 		//Player Setup (physics)
 		m_currentVelocity = Vector3.zero;
@@ -254,7 +249,7 @@ public class PlayerController : MonoBehaviour {
 			m_hasControl = true;
 			m_isAlive = true;
 			m_canMove = true;
-			//if (m_score > 0) m_score --;
+			//if (m_score > 0) m_score --; TODO should this exist
 			m_currentVelocity = Vector3.zero;
 			TeleportTo (GameObject.FindWithTag ("GameController").GetComponent<GameManagerScript> ().GetRandomRespawnPos ());
 			//TODO meybe respawn effects?
