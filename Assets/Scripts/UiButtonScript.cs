@@ -39,6 +39,14 @@ public class UiButtonScript : MonoBehaviour {
 		}
 	}
 
+	public void SetUpButton (bool isUiAction, string actionName, GameObject previousElement, Sprite wordSprite, 
+	Sprite[] customSprites) {
+		normalSprite = customSprites[0];
+		selectedSprite = customSprites[1];
+		pressedSprite = customSprites[2];
+		SetUpButton (isUiAction, actionName, previousElement, wordSprite);
+	}
+
 	static bool actionThisFrame; //FIX
 	void Update () {
 		if (selected) {

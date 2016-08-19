@@ -16,6 +16,7 @@ public class MenuController : MonoBehaviour {
 	public Sprite[] wordSprites;
 	public Sprite[] redTallySprites;
 	public Sprite[] blueTallySprites;
+	public Sprite[] mapButtonSprites;
 
 	enum MenuPage {
 		MAIN,
@@ -163,6 +164,11 @@ public class MenuController : MonoBehaviour {
 		uiElements[uiElements.Count - 1].GetComponent<UiButtonScript>().SetUpButton(isUiAction, actionName, previousElement, wordSprites[wordSpriteNumber]); //TODO
 	}
 
+	private void CreateButton (Vector3 position, bool isUiAction, string actionName, GameObject previousElement, int wordSpriteNumber, Sprite[] customSprites) {
+		uiElements.Add(Instantiate(buttonPrefab, position, Quaternion.identity) as GameObject);
+		uiElements[uiElements.Count - 1].GetComponent<UiButtonScript>().SetUpButton(isUiAction, actionName, previousElement, wordSprites[wordSpriteNumber], customSprites); //TODO
+	}
+
 	private void CreateImage (Vector3 position, Sprite image) { //only way to instantiate a button
 		uiElements.Add(Instantiate(imagePrefab, position, Quaternion.identity) as GameObject);
 		uiElements[uiElements.Count - 1].GetComponent<SpriteRenderer>().sprite = image; //TODO
@@ -184,12 +190,12 @@ public class MenuController : MonoBehaviour {
 	private void ShowPlayMenu () {			//PLAY
 		CreateImage(new Vector3(0,3f,0), mapsTitleImage);
 		//Instanciate buttons for the maps
-		CreateButton(new Vector3(-6,0f, 0), false, "map0", null, 0);
-		CreateButton(new Vector3(-2,0f, 0), false, "map1", uiElements[uiElements.Count - 1], 0);
-		CreateButton(new Vector3(2,0f, 0), false, "map2", uiElements[uiElements.Count - 1], 0);
-		CreateButton(new Vector3(6,0f, 0), false, "map3", uiElements[uiElements.Count - 1], 0);
+		CreateButton(new Vector3(-4.5f,0f, 0), false, "map0", null, 10, mapButtonSprites);
+		CreateButton(new Vector3(-1.5f,0f, 0), false, "map1", uiElements[uiElements.Count - 1], 11, mapButtonSprites);
+		CreateButton(new Vector3(1.5f,0f, 0), false, "map2", uiElements[uiElements.Count - 1], 12, mapButtonSprites);
+		CreateButton(new Vector3(4.5f,0f, 0), false, "map3", uiElements[uiElements.Count - 1], 13, mapButtonSprites);
 		//Instanciate a back button
-		CreateButton(new Vector3(0,-4f, 0), true, "main", uiElements[uiElements.Count - 1], 6);
+		CreateButton(new Vector3(0,-2f, 0), true, "main", uiElements[uiElements.Count - 1], 6);
 	}
 
 	private void ShowModeMenu () {			//MODE
