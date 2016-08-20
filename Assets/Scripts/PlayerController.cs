@@ -19,10 +19,8 @@ public class PlayerController : MonoBehaviour {
 	#endregion
 
 	#region varaibles - Current state (rules)
-	[HideInInspector]
-	public int m_lastDirection = 1, m_score = 0;
-	[HideInInspector]
-	public bool m_onGround = false, m_hasControl = true, m_isAlive = true, m_canMove = true;
+	public int m_lastDirection, m_score;
+	public bool m_onGround, m_hasControl, m_isAlive, m_canMove;
 	#endregion
 
 	#region varaibles - Current state (physics)
@@ -31,13 +29,13 @@ public class PlayerController : MonoBehaviour {
 	float m_gravity = -0.015f;// -0.015f; // how much you accelerate down
 	float m_friction = 0.5f; // ground resistance
 	float m_airResistance = 0.2f; // air resistance;
-	[HideInInspector]
-	public Vector3 m_currentVelocity, m_terminalVelocity, m_currentAcceleration; //movement vectors
+	public Vector3 m_currentVelocity, m_currentAcceleration; //movement vectors
 	#endregion
 
 	#region varaibles - constants
-	int m_numberOfRays = 5;
-	int m_solid = 256;
+	const int m_numberOfRays = 5;
+	const int m_solid = 256;
+	const float maxVelocity = 0.5f;
 	#endregion
 
 	#region varaibles - Based on player number / settings
@@ -59,6 +57,9 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	public void Spawn () {
+		//state
+		m_lastDirection = 1; m_score = 0; m_onGround = false; m_hasControl = true; m_isAlive = true; m_canMove = true;
+		m_currentVelocity = Vector3.zero; m_currentAcceleration = Vector3.zero;
 		//Player Setup (rules)
 		tag = "Player" + m_playerNumber;
 		m_horizontalAxis = "Horizontal" + m_playerNumber;
@@ -69,9 +70,6 @@ public class PlayerController : MonoBehaviour {
 		m_playerColor = m_playerNumber == 1 ? Color.red : Color.blue;
 		m_particleSystem.startColor = m_playerColor;
 		//Player Setup (physics)
-		m_currentVelocity = Vector3.zero;
-		m_terminalVelocity = new Vector3(1000,1000,0);
-		m_currentAcceleration = Vector3.zero;
 		TeleportTo (GameObject.FindWithTag ("GameController").GetComponent<GameManagerScript> ().GetRandomRespawnPos ());
 		//Gun Setup
 		m_playerGun = Instantiate(m_gunPrefab) as GameObject;
@@ -122,8 +120,11 @@ public class PlayerController : MonoBehaviour {
 			m_currentVelocity.y = 0;
 			m_currentAcceleration.y = 0;
 		}
-		//apply drag on y NOT NEEDED
-		//m_currentAcceleration.y += Mathf.Sign(m_currentVelocity.y) * -Mathf.Abs(m_currentVelocity.x);
+
+		//not more than maxspeed
+		if (Mathf.Abs(m_currentVelocity.x) > maxVelocity) m_currentVelocity.x = Mathf.Sign(m_currentVelocity.x) * maxVelocity;
+		if (Mathf.Abs(m_currentVelocity.y) > maxVelocity) m_currentVelocity.y = Mathf.Sign(m_currentVelocity.y) * maxVelocity;
+
 		//turn maths to pictures
 		SetPosition ();
 	}
@@ -216,9 +217,6 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void SetPosition () {
-		//clamp velocity to terminal
-		if (Mathf.Abs(m_currentVelocity.y) > Mathf.Abs(m_terminalVelocity.y)) { print (Mathf.Abs(m_currentVelocity.y) + " > " + Mathf.Abs(m_terminalVelocity.y));
-			m_currentVelocity.y = Mathf.Sign(m_currentVelocity.y) * m_terminalVelocity.y; print (" setting vel to" + Mathf.Sign(m_currentVelocity.y) * m_terminalVelocity.y);}
 		// v += a
 		m_currentVelocity += m_currentAcceleration;
 		// v = s [without collisions]
