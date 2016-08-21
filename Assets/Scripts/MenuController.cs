@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 public class MenuController : MonoBehaviour {
 
-	MenuPage currentPage;
 	GameManagerScript gameManagerScript;
 	AudioSource audioSource;
+	MenuPage currentPage;
 	
 	List<GameObject> uiElements = new List<GameObject>();
 	public GameObject imagePrefab;
@@ -35,6 +35,7 @@ public class MenuController : MonoBehaviour {
 	
 	void Awake () { //no start needed 
 		gameManagerScript = GameObject.FindWithTag("GameController").GetComponent<GameManagerScript>();
+		gameManagerScript.startEvent += HideMenu;
 		audioSource = GetComponent<AudioSource>();
 	}
 
@@ -104,12 +105,30 @@ public class MenuController : MonoBehaviour {
 				Debug.Log("how did this happen");
 				break;
 		}
+		//test for animated menus
+		StartCoroutine(animateMenu());
+	}
+
+	IEnumerator animateMenu() {
+		float amount = 0.2f;
+		float t = 0f;
+		float dt = 0.08f;
+		Vector3 initialPosition = Vector3.zero;
+		if (uiElements.Count > 0) {
+			initialPosition = uiElements[0].transform.position;
+		}
+		while (uiElements.Count > 0) {
+			uiElements[0].transform.position = initialPosition + new Vector3(Mathf.Cos(t) * amount, Mathf.Sin(t) * amount, 0);
+			t += dt;
+			yield return null;
+		}
 	}
 
 	private void HideMenu () { //clears the list
 		foreach (GameObject element in uiElements) {
 			Destroy(element);
 		}
+		uiElements.Clear();
 	}
 
 	public void StartUiAction(string action) { //for doing things like pause
@@ -154,10 +173,12 @@ public class MenuController : MonoBehaviour {
 				Application.Quit ();
 				break;
 			case "retry":
-				print("retry not implemented yet");
+				gameManagerScript.StartGame();
+				HideMenu();
 				break;
 			case "stop-game":
-				print("stop game not implemented yet");
+				gameManagerScript.EndGame();
+				OpenMenu("main");
 				break;
 			default:
 				break;
@@ -250,9 +271,9 @@ public class MenuController : MonoBehaviour {
 
 	private void ShowEndMenu () {		//END
 		// Title Image
-	    if (GameManagerScript.lastWinner == "Player1") {
+	    if (gameManagerScript.winner.tag == "Player1") {
 	    	CreateImage(new Vector3(0,2f,0), player1WinImage);
-		} else if (GameManagerScript.lastWinner == "Player2") {
+		} else if (gameManagerScript.winner.tag == "Player2") {
 			CreateImage(new Vector3(0,2f,0), player2WinImage);
 		} else {
 			//no winner...

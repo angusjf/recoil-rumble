@@ -243,7 +243,7 @@ public class PlayerController : MonoBehaviour {
 
 	#region other
 	public void Respawn () {
-		if (GameManagerScript.gameOver == false) {
+		if (GameManagerScript.gameRunning) {
 			m_hasControl = true;
 			m_isAlive = true;
 			m_canMove = true;

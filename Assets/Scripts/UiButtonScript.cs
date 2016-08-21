@@ -9,7 +9,7 @@ public class UiButtonScript : MonoBehaviour {
 	private MenuController mc;
 	#endregion
 	#region state
-	private bool selected = false;
+	public bool selected = false;
 	private bool pressed = false;
 	private GameObject text;
 	private bool isUiAction;
