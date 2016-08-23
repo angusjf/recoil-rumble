@@ -26,7 +26,6 @@ public class BulletController : MonoBehaviour {
 	}
 
 	void OnTriggerEnter2D (Collider2D other) {
-		print(other.gameObject.tag);//debug1hh h
 		if (!used && other.gameObject.tag != owner.tag && other.gameObject.tag != "Bullet") {
 			rb.velocity = Vector3.zero; // stop bullet
 			// explode TODO

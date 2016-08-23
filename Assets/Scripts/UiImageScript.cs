@@ -3,8 +3,10 @@ using System.Collections;
 
 public class UiImageScript : MonoBehaviour {
 
+	public bool moving;
+
 	void Start () {
-		StartCoroutine(Move());
+		if (moving) StartCoroutine(Move());
 	}
 
 	IEnumerator Move () {

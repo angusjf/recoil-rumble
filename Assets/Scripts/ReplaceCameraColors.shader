@@ -46,9 +46,9 @@
 				//col *= float4(1.1, 1.3, 1.3, 1); // more contrast
 				if (col.x == 1 && col.y == 1 && col.z == 1) {
 					//white
-					col.x = 0;
-					col.y = 0;
-					col.z = 0;
+					col.x = 0.3;
+					col.y = 0.2;
+					col.z = 0.2;
 				} 
 				else if (col.x == 1 && col.y == 0 && col.z == 0) {
 					//red

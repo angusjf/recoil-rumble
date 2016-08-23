@@ -3,7 +3,6 @@ using System.Collections;
 
 public class GunController : MonoBehaviour {
 
-	PlayerController pc;
 	CameraController cameraController;
 	public GameObject bullet;
 	public GameObject muzzleFlash;
@@ -47,7 +46,7 @@ public class GunController : MonoBehaviour {
 
 		if (Input.GetKeyDown(KeyCode.U)) isHeld = !isHeld;
 
-		if (ammo != maxAmmo && owner.GetComponent<PlayerHudDisplayer>().OnScreen()) {
+		if (ammo != maxAmmo && GameObject.FindWithTag("MainCamera").GetComponent<CameraController>().IsOnScreen(owner.transform.position)) {
 			ammo = maxAmmo;
 		}
 

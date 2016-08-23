@@ -5,7 +5,7 @@ public class PlayerHudDisplayer : MonoBehaviour {
 	#region variables
 	PlayerController pc;
 	GunController gc;
-	GameObject cam;
+	CameraController cam;
 
 	public GameObject scoreCounterPrefab;
 	public GameObject arrowPrefab;
@@ -20,7 +20,7 @@ public class PlayerHudDisplayer : MonoBehaviour {
 	void Start () {
 		pc = GetComponent<PlayerController>();
 		gc = pc.m_playerGun.GetComponent<GunController>();
-		cam = GameObject.FindWithTag("MainCamera");
+		cam = GameObject.FindWithTag("MainCamera").GetComponent<CameraController>();
 
 		//score	
 		scoreCounters = new GameObject[GameManagerScript.winScore];
@@ -59,33 +59,26 @@ public class PlayerHudDisplayer : MonoBehaviour {
 	}
 
 	void UpdateArrowPosition () {
-		Vector2 cameraMaxPos = new Vector2 (
-			cam.transform.position.x + cam.GetComponent<CameraController> ().bounds.x,
-			cam.transform.position.y + cam.GetComponent<CameraController> ().bounds.y
-		);
-
 		Vector3 pos = transform.position;
 		Vector3 rot = Vector3.zero;
 			
-		//isOnScreen = !(Mathf.Abs(pos.x) > Mathf.Abs(cameraMaxPos.x) + 1f || Mathf.Abs(pos.y) > Mathf.Abs(cameraMaxPos.y) + 1f);
-
-		if (!OnScreen()) {
+		if (!cam.IsOnScreen(transform.position)) {
 			// if off screen by one unit
 
-			if (pos.x > cameraMaxPos.x) {
-				pos.x = cameraMaxPos.x - 0.5f;
+			if (pos.x > cam.GetCameraBounds().extents.x) {
+				pos.x = cam.GetCameraBounds().extents.x - 0.5f;
 				rot.z = 0;
 			}
-			if (pos.x < cameraMaxPos.x - cam.GetComponent<CameraController> ().bounds.x * 2) {
-				pos.x = cameraMaxPos.x + 0.5f - cam.GetComponent<CameraController> ().bounds.x * 2;
+			if (pos.x < cam.GetCameraBounds().extents.x) {//- cam.GetComponent<CameraController> ().bounds.x * 2) {
+				pos.x = cam.GetCameraBounds().extents.x;// + 0.5f - cam.GetComponent<CameraController> ().bounds.x * 2;
 				rot.z = 180;
 			}
-			if (pos.y > cameraMaxPos.y)	{
-				pos.y = cameraMaxPos.y - 0.5f;
+			if (pos.y > cam.GetCameraBounds().extents.y)	{
+				pos.y = cam.GetCameraBounds().extents.y - 0.5f;
 				rot.z = 90;
 			}
-			if (pos.y < cameraMaxPos.y - cam.GetComponent<CameraController> ().bounds.y * 2) {
-				pos.y = cameraMaxPos.y + 0.5f - cam.GetComponent<CameraController> ().bounds.y * 2;
+			if (pos.y < cam.GetCameraBounds().extents.y) {
+				pos.y = cam.GetCameraBounds().extents.y + 0.5f;
 				rot.z = 270;
 			}
 
@@ -120,17 +113,6 @@ public class PlayerHudDisplayer : MonoBehaviour {
 
 	public void DestroyElements () {
 		Destroy (arrow);
-	}
-
-	public bool OnScreen() {
-		Vector2 cameraMaxPos = new Vector2 (
-			cam.transform.position.x + cam.GetComponent<CameraController> ().bounds.x,
-			cam.transform.position.y + cam.GetComponent<CameraController> ().bounds.y
-		);
-
-		Vector3 pos = transform.position;
-
-		return !(Mathf.Abs(pos.x) > Mathf.Abs(cameraMaxPos.x) + 1f || Mathf.Abs(pos.y) > Mathf.Abs(cameraMaxPos.y) + 1f);
 	}
 	#endregion
 }

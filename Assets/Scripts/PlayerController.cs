@@ -54,6 +54,7 @@ public class PlayerController : MonoBehaviour {
 		m_audioSource = GetComponent<AudioSource>();
 		m_particleSystem = GetComponent<ParticleSystem>();
 		m_spriteRenderer = GetComponent<SpriteRenderer>();
+		FindObjectOfType<GameManagerScript>().startGameEvent += Spawn;
 	}
 
 	public void Spawn () {

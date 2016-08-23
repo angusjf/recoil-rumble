@@ -14,7 +14,6 @@ public class GameManagerScript : MonoBehaviour {
 	public GameObject winner;
 
 	public event Action startEvent;
-	public event Action endEvent;
 	public event Action startGameEvent;
 	public event Action endGameEvent;
 	public event Action pauseEvent;
@@ -69,6 +68,8 @@ public class GameManagerScript : MonoBehaviour {
 		playerOne.GetComponent<PlayerController> ().m_playerNumber = 1;
 		playerTwo = Instantiate (playerPrefab) as GameObject;
 		playerTwo.GetComponent<PlayerController> ().m_playerNumber = 2;
+
+		if (startGameEvent != null) startGameEvent();
 	}
 
 	public void EndGame() {
@@ -87,16 +88,18 @@ public class GameManagerScript : MonoBehaviour {
         }
 
 		respawnPositions.Clear(); //get rid of old respawn points
+		if (endGameEvent != null) endGameEvent();
 	}
 
 	public void PauseGame() {
 		gameRunning = false;
 		playerOne.GetComponent<PlayerController>().m_canMove = false;
 		playerTwo.GetComponent<PlayerController>().m_canMove = false;
+		if (pauseEvent != null) pauseEvent();
 	}
 
 	public void ResumeGame() {
-		
+		if (resumeEvent != null) resumeEvent();
 	}
 
 	public GameObject GetPlayer (int no) {
