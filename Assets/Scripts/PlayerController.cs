@@ -62,10 +62,10 @@ public class PlayerController : MonoBehaviour {
 		m_lastDirection = 1; m_score = 0; m_onGround = false; m_hasControl = true; m_isAlive = true; m_canMove = true;
 		m_currentVelocity = Vector3.zero; m_currentAcceleration = Vector3.zero;
 		//Player Setup (rules)
-		tag = "Player" + m_playerNumber;
-		m_horizontalAxis = "Horizontal" + m_playerNumber;
-		m_verticalAxis = "Vertical" + m_playerNumber;
-		m_fireButton = "Fire" + m_playerNumber;
+		tag = m_playerNumber == 1 ? "Player1" : "Player2";
+		m_horizontalAxis = m_playerNumber == 1 ? "Horizontal1" : "Horizontal2";
+		m_verticalAxis = m_playerNumber == 1 ? "Vertical1" : "Vertical2";
+		m_fireButton = m_playerNumber == 1 ? "Fire1" : "Fire2";
 		m_sprites = m_playerNumber == 1 ? redSprites : blueSprites;
 		SetSprite(0);
 		m_playerColor = m_playerNumber == 1 ? Color.red : Color.blue;
@@ -151,7 +151,7 @@ public class PlayerController : MonoBehaviour {
 		float[] distances = new float[m_numberOfRays];
 		float a = 0;
 		// declare rayPosY and set it to the bottom of the collider
-		float rayPosX = (-m_boxCollider.bounds.extents.x /*EXPERIMENTAL*/ - m_boxCollider.offset.x) * 0.95f;
+		float rayPosX = (-m_boxCollider.bounds.extents.x /*EXPERIMENTAL*/ - m_boxCollider.offset.x) * 0.95f; //TODO use MAX not extents
 		float rayPosY = -m_boxCollider.bounds.extents.y * 0.95f;
 		int currentRay = 0;
 		Vector3 direction = Vector3.one;
@@ -290,12 +290,6 @@ public class PlayerController : MonoBehaviour {
 
 	public void SetSprite (int id) {
 		m_spriteRenderer.sprite = m_sprites[id];
-	}
-
-	void OnTriggerEnter2D (Collider2D other) {
-		if (other.gameObject.GetComponent<ButtonController>() != null) {
-			other.GetComponent<ButtonController>().Push(gameObject);
-		}
 	}
 
 	public void TeleportTo (Vector3 pos) {

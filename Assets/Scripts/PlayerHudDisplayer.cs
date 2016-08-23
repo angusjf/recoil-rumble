@@ -65,20 +65,20 @@ public class PlayerHudDisplayer : MonoBehaviour {
 		if (!cam.IsOnScreen(transform.position)) {
 			// if off screen by one unit
 
-			if (pos.x > cam.GetCameraBounds().extents.x) {
-				pos.x = cam.GetCameraBounds().extents.x - 0.5f;
+			if (pos.x > cam.GetCameraBounds().max.x) {
+				pos.x = cam.GetCameraBounds().max.x - 0.5f;
 				rot.z = 0;
 			}
-			if (pos.x < cam.GetCameraBounds().extents.x) {//- cam.GetComponent<CameraController> ().bounds.x * 2) {
-				pos.x = cam.GetCameraBounds().extents.x;// + 0.5f - cam.GetComponent<CameraController> ().bounds.x * 2;
-				rot.z = 180;
-			}
-			if (pos.y > cam.GetCameraBounds().extents.y)	{
-				pos.y = cam.GetCameraBounds().extents.y - 0.5f;
+			if (pos.y > cam.GetCameraBounds().max.y) {
+				pos.y = cam.GetCameraBounds().max.y - 0.5f;
 				rot.z = 90;
 			}
-			if (pos.y < cam.GetCameraBounds().extents.y) {
-				pos.y = cam.GetCameraBounds().extents.y + 0.5f;
+			if (pos.x < cam.GetCameraBounds().min.x) {//- cam.GetComponent<CameraController> ().bounds.x * 2) {
+				pos.x = cam.GetCameraBounds().min.x + 0.5f;// - cam.GetComponent<CameraController> ().bounds.x * 2;
+				rot.z = 180;
+			}
+			if (pos.y < cam.GetCameraBounds().min.y) {
+				pos.y = cam.GetCameraBounds().min.y + 0.5f;
 				rot.z = 270;
 			}
 

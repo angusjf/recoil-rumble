@@ -13,19 +13,9 @@ public class CameraController : MonoBehaviour {
 	}
 
 	void Update () {
-
 		if (GameManagerScript.gameRunning) {
-			LookAt(Vector3.Lerp (
-				transform.position,
-				GetAveragePosition(gameManagerScript.GetPlayer(1).transform.position, gameManagerScript.GetPlayer(2).transform.position) + shake,
-				0.4f
-			));
+			LookAt(Vector3.Lerp (transform.position, GetAveragePosition(gameManagerScript.players) + shake, 0.4f));
 		}
-
-		Debug.DrawLine(new Vector3(GetCameraBounds().extents.x,GetCameraBounds().extents.y,0), new Vector3(-GetCameraBounds().extents.x,GetCameraBounds().extents.y,0), Color.green);
-		Debug.DrawLine(new Vector3(-GetCameraBounds().extents.x,GetCameraBounds().extents.y,0), new Vector3(-GetCameraBounds().extents.x,-GetCameraBounds().extents.y,0), Color.green);
-		Debug.DrawLine(new Vector3(-GetCameraBounds().extents.x,-GetCameraBounds().extents.y,0), new Vector3(GetCameraBounds().extents.x,-GetCameraBounds().extents.y,0), Color.green);
-		Debug.DrawLine(new Vector3(GetCameraBounds().extents.x,-GetCameraBounds().extents.y,0), new Vector3(GetCameraBounds().extents.x,GetCameraBounds().extents.y,0), Color.green);
 	}
 
 	void LookAt(Vector3 pos) {
@@ -33,9 +23,10 @@ public class CameraController : MonoBehaviour {
 		transform.position = pos;
 	}
 
-	Vector3 GetAveragePosition(params Vector3[] positions) {
+	Vector3 GetAveragePosition(GameObject[] gameObjects) {
+		Vector3[] positions = new Vector3[gameObjects.Length];
 		for (int i = 0; i < positions.Length; i++) {
-			positions[i] = ClampToScreen(positions[i]);
+			positions[i] = ClampToScreen(gameObjects[i].transform.position);
 		}
 		Vector3 sumPositions = Vector3.zero;
 		for (int i = 0; i < positions.Length; i++) {
@@ -45,25 +36,28 @@ public class CameraController : MonoBehaviour {
 	}
 
 	public bool IsOnScreen(Vector3 pos) {
-		return Mathf.Abs(pos.x) > GetCameraBounds().extents.x || Mathf.Abs(pos.y) > GetCameraBounds().extents.y;
+		return pos.x < GetCameraBounds().max.x && pos.y < GetCameraBounds().max.y && pos.x > GetCameraBounds().min.x && pos.y > GetCameraBounds().min.y;
 	}
 
 	Vector3 ClampToScreen(Vector3 pos) {
-		if (Mathf.Abs(pos.x) > GetCameraBounds().extents.x) {
-			pos.x = GetCameraBounds().extents.x * Mathf.Sign(pos.x);
-		}
-		if (Mathf.Abs(pos.y) > GetCameraBounds().extents.y) {
-			pos.y = GetCameraBounds().extents.y * Mathf.Sign(pos.y);
-		}
+		float insetWidth = 3;
+		if (pos.x > GetCameraBounds().max.x - insetWidth)
+			pos.x = GetCameraBounds().max.x - insetWidth;
+		if (pos.y > GetCameraBounds().max.y - insetWidth)
+			pos.y = GetCameraBounds().max.y - insetWidth;
+		if (pos.x < GetCameraBounds().min.x + insetWidth)
+			pos.x = GetCameraBounds().min.x + insetWidth;
+		if (pos.y < GetCameraBounds().min.y + insetWidth)
+			pos.y = GetCameraBounds().min.y + insetWidth;
 		return pos;
-	}
-
-	public void StartScreenShake (float a, int f) {
-		StartCoroutine(ShakeScreen(a, f));
 	}
 
 	public Bounds GetCameraBounds() {
 		return new Bounds(transform.position, new Vector3(camera.orthographicSize * camera.aspect * 2, camera.orthographicSize * 2, 0));
+	}
+
+	public void StartScreenShake (float a, int f) {
+		StartCoroutine(ShakeScreen(a, f));
 	}
 
 	IEnumerator ShakeScreen (float a, int f) {

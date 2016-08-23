@@ -95,7 +95,7 @@ public class MenuController : MonoBehaviour {
 		CreateImage(new Vector3(0,3f,0), modesTitleImage);
 		CreateButton(new Vector3(0,0f, 0), StartPointsGame, null, 4); //Instanciate a points mode button
 		CreateButton(new Vector3(0,-1f, 0), StartTimedGame, uiElements[uiElements.Count - 1], 5); //Instanciate a time mode button
-		CreateButton(new Vector3(0,-2f, 0), ShowMainMenu, uiElements[uiElements.Count - 1], 6); //Instanciate a back button
+		CreateButton(new Vector3(0,-2f, 0), ShowPlayMenu, uiElements[uiElements.Count - 1], 6); //Instanciate a back button
 	}
 
 	void StartPointsGame() {

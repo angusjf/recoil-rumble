@@ -10,7 +10,6 @@ public class GameManagerScript : MonoBehaviour {
 	public static bool gameRunning = false;
 	public bool timedMode;
 	public const int winScore = 5;
-	public static int playerOneWins = 0, playerTwoWins = 0;
 	public GameObject winner;
 
 	public event Action startEvent;
@@ -19,7 +18,7 @@ public class GameManagerScript : MonoBehaviour {
 	public event Action pauseEvent;
 	public event Action resumeEvent;
 
-	private GameObject playerOne, playerTwo;
+	public GameObject[] players;
 	private Vector3 offset = new Vector3(-9.75f,7.25f,0);
 
 	public static List<Vector3> respawnPositions = new List<Vector3>();
@@ -40,13 +39,14 @@ public class GameManagerScript : MonoBehaviour {
 			if (Input.GetButtonDown (GameManagerScript.PAUSE_BUTTON))
 				PauseGame ();
 			//if any player wins then end the game
-			if (playerOne.GetComponent<PlayerController>().m_score >= winScore) {
-				winner = playerOne;
-				EndGame ();
-			}
-			else if (playerTwo.GetComponent<PlayerController>().m_score >= winScore) {
-				winner = playerTwo;
-				EndGame ();
+			for (int i = 0; i < players.Length; i++) {
+				if (players[i].transform.position.y < -30) {
+					players[i].GetComponent<PlayerController>().Respawn();
+				}
+				if (players[i].GetComponent<PlayerController>().m_score >= winScore) {
+					winner = players[i];
+					EndGame ();
+				}
 			}
 		} else {
 			//resume
@@ -57,6 +57,7 @@ public class GameManagerScript : MonoBehaviour {
 	}
 
 	public void StartGame () {
+		players = new GameObject[3];
 		gameRunning = true;
 
 		// get map in game
@@ -64,24 +65,21 @@ public class GameManagerScript : MonoBehaviour {
 		GenerateLevel(currentMap);
 
 		// get players in game
-		playerOne = Instantiate (playerPrefab) as GameObject;
-		playerOne.GetComponent<PlayerController> ().m_playerNumber = 1;
-		playerTwo = Instantiate (playerPrefab) as GameObject;
-		playerTwo.GetComponent<PlayerController> ().m_playerNumber = 2;
+		for (int i = 0; i < players.Length; i ++) {
+			players[i] = Instantiate (playerPrefab) as GameObject;
+			players[i].GetComponent<PlayerController> ().m_playerNumber = i + 1;
+		}
 
 		if (startGameEvent != null) startGameEvent();
 	}
 
 	public void EndGame() {
 		gameRunning = false;
-		if (winner != null) {
-			if (winner == playerOne) playerOneWins ++;
-			else if (winner == playerTwo) playerTwoWins ++;
-		}
 
 		//clean up old game
-		if (playerOne != null) playerOne.GetComponent<PlayerController>().SafeDestroy();
-		if (playerTwo != null) playerTwo.GetComponent<PlayerController>().SafeDestroy();
+		for (int i = 0; i < players.Length; i++) {
+			if (players[i] != null) players[i].GetComponent<PlayerController>().SafeDestroy();
+		}
 
 		foreach (GameObject o in FindObjectsOfType<GameObject>()) {
 			if (o.tag == "Solid") Destroy(o);
@@ -93,8 +91,9 @@ public class GameManagerScript : MonoBehaviour {
 
 	public void PauseGame() {
 		gameRunning = false;
-		playerOne.GetComponent<PlayerController>().m_canMove = false;
-		playerTwo.GetComponent<PlayerController>().m_canMove = false;
+		for (int i = 0; i < players.Length; i++) {
+			players[0].GetComponent<PlayerController>().m_canMove = false;
+		}
 		if (pauseEvent != null) pauseEvent();
 	}
 
@@ -103,7 +102,7 @@ public class GameManagerScript : MonoBehaviour {
 	}
 
 	public GameObject GetPlayer (int no) {
-		return no == 1 ? playerOne : playerTwo;
+		return players[no];
 	}
 
 	int[,] LoadMap(int num) { // load a map from text file
