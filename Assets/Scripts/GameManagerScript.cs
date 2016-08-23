@@ -15,6 +15,8 @@ public class GameManagerScript : MonoBehaviour {
 
 	public event Action startEvent;
 	public event Action endEvent;
+	public event Action startGameEvent;
+	public event Action endGameEvent;
 	public event Action pauseEvent;
 	public event Action resumeEvent;
 
@@ -27,7 +29,11 @@ public class GameManagerScript : MonoBehaviour {
 	public int currentMapNumber;
 	int[,] currentMap = new int[30,40];
 
-	public const string CONFIRM_BUTTON = "MenuConfirm", CANCEL_BUTTON = "MenuCancel", UP_BUTTON = "MenuUp", DOWN_BUTTON = "MenuDown", PAUSE_BUTTON = "Pause";
+	const string PAUSE_BUTTON = "Pause";
+
+	void Start () {
+		startEvent();
+	}
 
 	void Update () {
 		if (GameManagerScript.gameRunning) {

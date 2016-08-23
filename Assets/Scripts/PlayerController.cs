@@ -70,7 +70,7 @@ public class PlayerController : MonoBehaviour {
 		m_playerColor = m_playerNumber == 1 ? Color.red : Color.blue;
 		m_particleSystem.startColor = m_playerColor;
 		//Player Setup (physics)
-		TeleportTo (GameObject.FindWithTag ("GameController").GetComponent<GameManagerScript> ().GetRandomRespawnPos ());
+		TeleportTo (GameObject.FindWithTag ("GameController").GetComponent<GameManagerScript> ().GetNextRespawnPos ());
 		//Gun Setup
 		m_playerGun = Instantiate(m_gunPrefab) as GameObject;
 		m_playerGun.GetComponent<GunController>().owner = gameObject;
@@ -249,7 +249,7 @@ public class PlayerController : MonoBehaviour {
 			m_canMove = true;
 			//if (m_score > 0) m_score --; TODO should this exist
 			m_currentVelocity = Vector3.zero;
-			TeleportTo (GameObject.FindWithTag ("GameController").GetComponent<GameManagerScript> ().GetRandomRespawnPos ());
+			TeleportTo (GameObject.FindWithTag ("GameController").GetComponent<GameManagerScript> ().GetNextRespawnPos ());
 			//TODO meybe respawn effects?
 			SetSprite(0);
 			//reload gun

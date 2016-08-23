@@ -2,29 +2,25 @@
 using System.Collections;
 
 public class UiButtonScript : MonoBehaviour {
-	#region refs
-	public GameObject wordPrefab;
-	public Sprite normalSprite, selectedSprite, pressedSprite;
 	private SpriteRenderer sr;
 	private MenuController mc;
-	#endregion
-	#region state
+	public GameObject wordPrefab;
+	private GameObject text;
+	public Sprite normalSprite, selectedSprite, pressedSprite;
+
 	public bool selected = false;
 	private bool pressed = false;
-	private GameObject text;
-	private bool isUiAction;
-	private string actionName;
 	private GameObject nextElement, previousElement;
-	#endregion
+	public delegate void ActionOnPressed();
+	private ActionOnPressed actionOnPressed;
 
 	void Awake () {
 		sr = GetComponent<SpriteRenderer>();
 		mc = GameObject.FindWithTag("GameController").GetComponent<MenuController>();
 	}
 
-	public void SetUpButton (bool isUiAction, string actionName, GameObject previousElement, Sprite wordSprite) {
-		this.isUiAction = isUiAction;
-		this.actionName = actionName;
+	public void SetUpButton (ActionOnPressed actionOnPressed, GameObject previousElement, Sprite wordSprite) {
+		this.actionOnPressed = actionOnPressed;
 		this.previousElement = previousElement;
 		//text setup
 		text = Instantiate(wordPrefab, transform.position + new Vector3(0,0,-1), Quaternion.identity) as GameObject;
@@ -39,29 +35,29 @@ public class UiButtonScript : MonoBehaviour {
 		}
 	}
 
-	public void SetUpButton (bool isUiAction, string actionName, GameObject previousElement, Sprite wordSprite, 
+	public void SetUpButton (ActionOnPressed actionOnPressed, GameObject previousElement, Sprite wordSprite, 
 	Sprite[] customSprites) {
 		normalSprite = customSprites[0];
 		selectedSprite = customSprites[1];
 		pressedSprite = customSprites[2];
-		SetUpButton (isUiAction, actionName, previousElement, wordSprite);
+		SetUpButton (actionOnPressed, previousElement, wordSprite);
 	}
 
 	static bool actionThisFrame; //FIX
 	void Update () {
 		if (selected) {
 			//press
-			if (Input.GetButtonDown(GameManagerScript.CONFIRM_BUTTON) && !pressed) {
+			if (Input.GetButtonDown(MenuController.CONFIRM_BUTTON) && !pressed) {
 				StartCoroutine(Press());
 				mc.playSound("press");
 			}
 			//move up / down
-			if (Input.GetButtonDown(GameManagerScript.UP_BUTTON) && previousElement != null) {
+			if (Input.GetButtonDown(MenuController.UP_BUTTON) && previousElement != null) {
 				previousElement.GetComponent<UiButtonScript> ().Select ();
 				Deselect();
 				mc.playSound("move");
 			}
-			if (Input.GetButtonDown(GameManagerScript.DOWN_BUTTON) && nextElement != null && !actionThisFrame) {
+			if (Input.GetButtonDown(MenuController.DOWN_BUTTON) && nextElement != null && !actionThisFrame) {
 				nextElement.GetComponent<UiButtonScript> ().Select (); //BROKEN
 				actionThisFrame = true; //FIX
 				Deselect();
@@ -69,7 +65,6 @@ public class UiButtonScript : MonoBehaviour {
 			}
 		}
 	}
-
 	void LateUpdate () { actionThisFrame = false; }
 
 	void Select() {
@@ -87,11 +82,7 @@ public class UiButtonScript : MonoBehaviour {
 		pressed = true;
 		text.transform.position += new Vector3 (0, -0.17f); // TODO exact number
 		for (int i = 0; i < 10; i++) {yield return null;}
-		if (isUiAction) {
-			mc.OpenMenu(actionName);
-		} else {
-			mc.StartUiAction(actionName);
-		}
+		actionOnPressed();
 	}
 
 	public void SetNextElement(GameObject element) {

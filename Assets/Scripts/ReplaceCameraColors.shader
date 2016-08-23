@@ -46,26 +46,30 @@
 				//col *= float4(1.1, 1.3, 1.3, 1); // more contrast
 				if (col.x == 1 && col.y == 1 && col.z == 1) {
 					//white
-					col.x = 1;
-					col.y = 1;
-					col.z = 1;
+					col.x = 0;
+					col.y = 0;
+					col.z = 0;
 				} 
-				if (col.x == 1 && col.y == 0 && col.z == 0) {
+				else if (col.x == 1 && col.y == 0 && col.z == 0) {
 					//red
 					col.x = 1;
 					col.y = 0.4;
 					col.z = 0.4;
 				}
-				if (col.x == 0 && col.y == 0 && col.z == 1) {
+				else if (col.x == 0 && col.y == 0 && col.z == 1) {
 					//blue
 					col.x = 0;
 					col.y = 0.7;
 					col.z = 0.9;
 				}
-				if (col.x == 0 && col.y == 0 && col.z == 0) {
-					col.x = 0.2;
-					col.y = 0.3;
-					col.z = 0.4;
+				else if (col.x == 0 && col.y == 0 && col.z == 0) {
+					//black
+					//col.x = 0.2;
+					//col.y = 0.3;
+					//col.z = 0.4;
+					col.x = 0.9;
+					col.y = 0.9;
+					col.z = 0.9;
 				}
 				return col;
 			}
