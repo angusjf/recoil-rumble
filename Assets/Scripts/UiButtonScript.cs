@@ -82,7 +82,7 @@ public class UiButtonScript : MonoBehaviour {
 		pressed = true;
 		text.transform.position += new Vector3 (0, -0.17f); // TODO exact number
 		for (int i = 0; i < 10; i++) {yield return null;}
-		actionOnPressed();
+		if (actionOnPressed != null) actionOnPressed();
 	}
 
 	public void SetNextElement(GameObject element) {

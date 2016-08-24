@@ -110,43 +110,144 @@ public class GameManagerScript : MonoBehaviour {
 		string mapsString = System.IO.File.ReadAllText(@"Assets/maps.txt");
 		string mapString = mapsString.Split('-')[num];
 		mapString = mapString.Replace("\n","");
+		int[,] map = new int[40,30];
 		int x = 0, y = 0;
-		int[,] map = new int[30,40];
 		for (int i = 0; i < mapString.Length; i++) {
 			map[x,y] = int.Parse(mapString.Substring(i,1));
-			y++;
-			if (y >= 40) {
-				y = 0;
-				x++;
+			x++;
+			if (x >= 40) {
+				x = 0;
+				y++;
 			}
 		}
 		return map;
 	}
 
 	void GenerateLevel (int[,] map) { // make a new level from a map
-		for (int i = 0; i < map.GetLength(0); i ++) {
-			for (int j = 0; j < map.GetLength(1); j ++) {
-				if (map[i,j] != 0) {
-					//alone0, left1, top2, surrounded3
-					CreateBlock(i,j,map[i,j]);
+		for (int y = 0; y < map.GetLength(1); y ++) {
+			for (int x = 0; x < map.GetLength(0); x ++) {
+				if (map[x,y] == 1) {
+					respawnPositions.Add(GetLevelPos(x, y));
+				} else if (map[x,y] == 2) {
+					//TODO stop index - 1
+
+					bool left = map[x - 1, y] == 2;
+					bool right = map[x + 1, y] == 2;
+					bool up = map[x, y - 1] == 2;
+					bool down = map[x, y + 1] == 2;
+
+					if (!left && right && down && !up)//top left BLOCK
+						CreateBlock(x, y, 0);
+					else if (left && right && down && !up)//top mid
+						CreateBlock(x, y, 1);
+					else if (left && !right && down && !up)//top right
+						CreateBlock(x, y, 2);
+					else if (!left && right && down && up)//mid left
+						CreateBlock(x, y, 3);
+					else if (left && right && down && up)//mid mid
+						CreateBlock(x, y, 4);
+					else if (left && !right && down && up)//mid right
+						CreateBlock(x, y, 5);
+					else if (!left && right && !down && up)//bot left
+						CreateBlock(x, y, 6);
+					else if (left && right && !down && up)//bot mid
+						CreateBlock(x, y, 7);
+					else if (left && !right && !down && up)//bot right
+						CreateBlock(x, y, 8);
+					else if (!left && !right && down && !up)//top VERT
+						CreateBlock(x, y, 9);
+					else if (!left && !right && down && up)//mid
+						CreateBlock(x, y, 10);
+					else if (!left && !right && !down && up)//bot
+						CreateBlock(x, y, 11);
+					else if (!left && right && !down && !up)//left HORIZ
+						CreateBlock(x, y, 12);
+					else if (left && right && !down && !up) //mid
+						CreateBlock(x, y, 13);
+					else if (left && !right && !down && !up)//right
+						CreateBlock(x, y, 14);
+					else
+						CreateBlock(x, y, -1);
 				}
 			}
 		}
 	}
 
-	void CreateBlock (int yPos, int xPos, int blockType) { // place a block in the scene
-		if (blockType == 1) {
-			respawnPositions.Add(GetLevelPos(xPos, -yPos)); 
-		} else {
-			(Instantiate(block, GetLevelPos(xPos, -yPos), Quaternion.identity) as GameObject).GetComponent<SpriteRenderer>().sprite = blockSprites[blockType - 2];
+	void CreateBlock (int xPos, int yPos, int blockRef) { // place a block in the scene
+		int blockSprite = 0;
+		bool flippedX = false, flippedY = false;
+		switch (blockRef) {
+			case 0:
+				blockSprite = 0;
+				break;
+			case 1:
+				blockSprite = 1;
+				break;
+			case 2:
+				blockSprite = 0;
+				flippedX = true;
+				break;
+			case 3:
+				blockSprite = 3;
+				break;
+			case 4:
+				blockSprite = 4;
+				break;
+			case 5:
+				blockSprite = 3;
+				flippedX = true;
+				break;
+			case 6:
+				blockSprite = 0;
+				flippedY = true;
+				break;
+			case 7:
+				blockSprite = 1;
+				flippedY = true;
+				break;
+			case 8:
+				blockSprite = 0;
+				flippedX = true;
+				flippedY = true;
+				break;
+			case 9: //vertical 
+				blockSprite = 2;
+				break;
+			case 10:
+				blockSprite = 5;
+				break;
+			case 11:
+				blockSprite = 2;
+				flippedY = true;
+				break;
+			case 12: // horizontal
+				blockSprite = 6;
+				break;
+			case 13:
+				blockSprite = 7;
+				break;
+			case 14:
+				blockSprite = 6;
+				flippedX = true;
+				break;
+			default:
+				break;
 		}
+		GameObject newBlock = Instantiate(block, GetLevelPos(xPos, yPos), Quaternion.identity) as GameObject;
+		newBlock.GetComponent<SpriteRenderer>().sprite = blockSprites[blockSprite];
+		newBlock.GetComponent<SpriteRenderer>().flipX = flippedX;
+		newBlock.GetComponent<SpriteRenderer>().flipY = flippedY;
 	}
 
 	Vector3 GetLevelPos(int x, int y) { // converts a map pos to world space
-		return new Vector3 (x * 0.5f, y * 0.5f, 0) + offset;
+		return new Vector3 (x * 0.5f, y * -0.5f, 0) + offset;
 	}
 
 	public Vector3 GetNextRespawnPos () { // selects a vector3 from the list
+		if (respawnPositions.Count == 0) {
+			print("no respawn positons found");
+			return Vector3.zero;
+		}
 		if (nextRespawnPositionCounter >= respawnPositions.Count)
 			nextRespawnPositionCounter = 0;
 		return respawnPositions[nextRespawnPositionCounter++];

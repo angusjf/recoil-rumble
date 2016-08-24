@@ -80,7 +80,7 @@ public class PlayerController : MonoBehaviour {
 
 	#region MonoBehaviour methods
 	void FixedUpdate () {
-		//see if you are on the ground 
+		//see if you are on the ground
 		m_onGround = IsOnGround();
 		//which direction to fire / move in
 		if (Mathf.Abs(Input.GetAxisRaw(m_horizontalAxis)) > 0) m_lastDirection = (int)Mathf.Sign(Input.GetAxisRaw(m_horizontalAxis));
@@ -113,7 +113,7 @@ public class PlayerController : MonoBehaviour {
 
 		//apply drag on x only if in control TODO?
 		m_currentAcceleration.x = m_hasControl ? m_currentAcceleration.x + Mathf.Sign(m_currentVelocity.x) * -Mathf.Abs(m_currentVelocity.x) * m_dragAmount : 0; // TODO
-		
+
 		//gravity
 		if (!m_onGround) {
 			m_currentAcceleration.y = m_gravity;
