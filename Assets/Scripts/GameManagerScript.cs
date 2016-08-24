@@ -58,7 +58,7 @@ public class GameManagerScript : MonoBehaviour {
 	}
 
 	public void StartGame () {
-		players = new GameObject[3];
+		players = new GameObject[2];
 		gameRunning = true;
 
 		// get map in game

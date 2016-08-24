@@ -2,20 +2,18 @@
 using System.Collections;
 
 public class PlayerHudDisplayer : MonoBehaviour {
-	#region variables
 	PlayerController pc;
 	CameraController cam;
 
-	public GameObject scoreCounterPrefab;
-	public GameObject arrowPrefab;
+	public GameObject scoreCounterPrefab, arrowPrefab;
+	public Sprite[] starSprites = new Sprite[2];
 		
 	GameObject[] scoreCounters;
 	GameObject arrow;
 
-	public Sprite[] starSprites = new Sprite[2];
-	#endregion
+	WaitForSeconds ShortWait = new WaitForSeconds(0.2f);
+	WaitForSeconds LongWait = new WaitForSeconds(4);
 
-	#region MonoBehaviour
 	void Start () {
 		pc = GetComponent<PlayerController>();
 		cam = Camera.main.GetComponent<CameraController>();
@@ -39,9 +37,7 @@ public class PlayerHudDisplayer : MonoBehaviour {
 		UpdateCounterVisiblity();
 		UpdateArrowPosition();
 	}
-	#endregion
 
-	#region others
 	void UpdateCounterVisiblity () {
 		if (pc.m_score > scoreCounters.Length) return;
 
@@ -61,7 +57,6 @@ public class PlayerHudDisplayer : MonoBehaviour {
 		Vector3 rot = Vector3.zero;
 			
 		if (!cam.IsOnScreen(transform.position)) {
-			// if off screen by one unit
 
 			if (pos.x > cam.GetCameraBounds().max.x) {
 				pos.x = cam.GetCameraBounds().max.x - 0.5f;
@@ -89,20 +84,20 @@ public class PlayerHudDisplayer : MonoBehaviour {
 		}
 	}
 
-	public IEnumerator SetScoreVisibilty (bool visible, float timeVisible) {
+	public IEnumerator SetScoreVisibilty (bool visible) {
 		for (int i = 0; i < scoreCounters.Length; i ++) {
 			scoreCounters[i].GetComponent<SpriteRenderer>().enabled = visible;
 		}
 
 		if (visible) {
-			yield return new WaitForSeconds (timeVisible);
-			StartCoroutine(SetScoreVisibilty(false,0f));
+			yield return LongWait;
+			StartCoroutine(SetScoreVisibilty(false));
 		}
 	}
 
 	public IEnumerator BounceScore () {
-		StartCoroutine(SetScoreVisibilty(true, 1f));
-		yield return new WaitForSeconds (0.2f);
+		StartCoroutine(SetScoreVisibilty(true));
+		yield return ShortWait;
 		for (int i = 0; i < 10; i ++) {
 			scoreCounters[pc.m_score - 1].transform.position += (i < 5 ? 0.05f : -0.05f) * Vector3.up;
 			yield return null;
@@ -112,5 +107,4 @@ public class PlayerHudDisplayer : MonoBehaviour {
 	public void DestroyElements () {
 		Destroy (arrow);
 	}
-	#endregion
 }
