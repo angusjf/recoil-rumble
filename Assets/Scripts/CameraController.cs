@@ -3,18 +3,19 @@ using System.Collections;
 
 public class CameraController : MonoBehaviour {
 
-	Camera camera;
+	Camera cam;
 	GameManagerScript gameManagerScript;
 	Vector3 shake;
+	float lerpAmount = 0;
 
 	void Start () {
-		camera = GetComponent<Camera>();
+		cam = GetComponent<Camera>();
 		gameManagerScript = GameObject.FindWithTag ("GameController").GetComponent<GameManagerScript> ();
 	}
 
 	void Update () {
 		if (GameManagerScript.gameRunning) {
-			LookAt(Vector3.Lerp (transform.position, GetAveragePosition(gameManagerScript.players) + shake, 0.4f));
+			LookAt(Vector3.Lerp (transform.position, GetAveragePosition(gameManagerScript.players) + shake, lerpAmount));
 		}
 	}
 
@@ -53,7 +54,7 @@ public class CameraController : MonoBehaviour {
 	}
 
 	public Bounds GetCameraBounds() {
-		return new Bounds(transform.position, new Vector3(camera.orthographicSize * camera.aspect * 2, camera.orthographicSize * 2, 0));
+		return new Bounds(transform.position, new Vector3(cam.orthographicSize * cam.aspect * 2, cam.orthographicSize * 2, 0));
 	}
 
 	public void StartScreenShake (float a, int f) {

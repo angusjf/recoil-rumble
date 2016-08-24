@@ -47,12 +47,12 @@
 
 				if (col.x == 1 && col.y == 1 && col.z == 1) {
 					//white
-					col.x = 0.9;
-					col.y = 0.9;
-					col.z = 0.9;
-					//col.x = 0.3;
-					//col.y = 0.2;
-					//col.z = 0.2;
+					//col.x = 0.9;
+					//col.y = 0.9;
+					//col.z = 0.9;
+					col.x = 0.3;
+					col.y = 0.2;
+					col.z = 0.2;
 				} else if (col.x == 1 && col.y == 0 && col.z == 0) {
 					//red
 					col.x = 1;
@@ -65,12 +65,12 @@
 					col.z = 0.9;
 				} else if (col.x == 0 && col.y == 0 && col.z == 0) {
 					//black
-					col.x = 0.2;
-					col.y = 0.3;
-					col.z = 0.4;
-					//col.x = 0.9;
-					//col.y = 0.9;
-					//col.z = 0.9;
+					//col.x = 0.2;
+					//col.y = 0.3;
+					//col.z = 0.4;
+					col.x = 0.9;
+					col.y = 0.9;
+					col.z = 0.9;
 				}
 				return col;
 			}

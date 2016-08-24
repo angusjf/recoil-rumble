@@ -4,7 +4,6 @@ using System.Collections;
 public class PlayerHudDisplayer : MonoBehaviour {
 	#region variables
 	PlayerController pc;
-	GunController gc;
 	CameraController cam;
 
 	public GameObject scoreCounterPrefab;
@@ -19,8 +18,7 @@ public class PlayerHudDisplayer : MonoBehaviour {
 	#region MonoBehaviour
 	void Start () {
 		pc = GetComponent<PlayerController>();
-		gc = pc.m_playerGun.GetComponent<GunController>();
-		cam = GameObject.FindWithTag("MainCamera").GetComponent<CameraController>();
+		cam = Camera.main.GetComponent<CameraController>();
 
 		//score	
 		scoreCounters = new GameObject[GameManagerScript.winScore];

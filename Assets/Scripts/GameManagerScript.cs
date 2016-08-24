@@ -5,7 +5,8 @@ using System.Collections.Generic;
 
 public class GameManagerScript : MonoBehaviour {
 	public GameObject playerPrefab;
-	public GameObject[] blocks = new GameObject[5];
+	public GameObject block;
+	public Sprite[] blockSprites;
 
 	public static bool gameRunning = false;
 	public bool timedMode;
@@ -126,6 +127,7 @@ public class GameManagerScript : MonoBehaviour {
 		for (int i = 0; i < map.GetLength(0); i ++) {
 			for (int j = 0; j < map.GetLength(1); j ++) {
 				if (map[i,j] != 0) {
+					//alone0, left1, top2, surrounded3
 					CreateBlock(i,j,map[i,j]);
 				}
 			}
@@ -136,7 +138,7 @@ public class GameManagerScript : MonoBehaviour {
 		if (blockType == 1) {
 			respawnPositions.Add(GetLevelPos(xPos, -yPos)); 
 		} else {
-			Instantiate(blocks[blockType - 2], GetLevelPos(xPos, -yPos), Quaternion.identity);
+			(Instantiate(block, GetLevelPos(xPos, -yPos), Quaternion.identity) as GameObject).GetComponent<SpriteRenderer>().sprite = blockSprites[blockType - 2];
 		}
 	}
 

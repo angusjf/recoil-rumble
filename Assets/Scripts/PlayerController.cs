@@ -4,7 +4,7 @@ using System.Collections;
 public class PlayerController : MonoBehaviour {
 
 	#region varaibles - Componants
-	GameObject mainCamera;
+	CameraController cameraController;
 	BoxCollider2D m_boxCollider;
 	AudioSource m_audioSource;
 	ParticleSystem m_particleSystem;
@@ -49,7 +49,7 @@ public class PlayerController : MonoBehaviour {
 	#region setup methods
 	void Awake () {
 		//Componant / GameObject references
-		mainCamera = GameObject.FindWithTag("MainCamera");
+		cameraController = Camera.main.GetComponent<CameraController>();
 		m_boxCollider = GetComponent<BoxCollider2D>();
 		m_audioSource = GetComponent<AudioSource>();
 		m_particleSystem = GetComponent<ParticleSystem>();
@@ -270,7 +270,7 @@ public class PlayerController : MonoBehaviour {
 		yield return null; // wait 1 - move a bit
 
 		m_canMove = false; // freeze
-		mainCamera.GetComponent<CameraController>().StartScreenShake(1.4f,3); // shake
+		cameraController.StartScreenShake(1.4f,3); // shake
 
 		yield return new WaitForSeconds(0.12f); // wait a bit
 

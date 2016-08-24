@@ -26,7 +26,7 @@ public class GunController : MonoBehaviour {
 	Vector3 shootVector;
 
 	public virtual void Start () {
-		cameraController = GameObject.FindWithTag("MainCamera").GetComponent<CameraController>();
+		cameraController = Camera.main.GetComponent<CameraController>();
 
 		muzzleFlash = Instantiate(muzzleFlash, transform.position + new Vector3 (0.26f,0.0333f,0), Quaternion.identity) as GameObject;
 		muzzleFlash.transform.parent = transform;
@@ -46,7 +46,7 @@ public class GunController : MonoBehaviour {
 
 		if (Input.GetKeyDown(KeyCode.U)) isHeld = !isHeld;
 
-		if (ammo != maxAmmo && GameObject.FindWithTag("MainCamera").GetComponent<CameraController>().IsOnScreen(owner.transform.position)) {
+		if (ammo != maxAmmo && cameraController.IsOnScreen(owner.transform.position)) {
 			ammo = maxAmmo;
 		}
 
