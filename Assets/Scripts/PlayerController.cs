@@ -3,47 +3,45 @@ using System.Collections;
 
 public class PlayerController : MonoBehaviour {
 
-	#region varaibles - Componants
+	#region not so variable varaibles
+	//components
 	CameraController cameraController;
 	BoxCollider2D m_boxCollider;
 	AudioSource m_audioSource;
 	ParticleSystem m_particleSystem;
 	SpriteRenderer m_spriteRenderer;
-	#endregion
 
-	#region varaibles - Assets
+	//Assets
 	public AudioClip[] m_soundEffects; // land, shoot, explosion
 	public Sprite[] redSprites, blueSprites; //alive, dead, flying
 	Sprite[] m_sprites; //alive, dead, flying
 	public GameObject m_gunPrefab;
-	#endregion
 
-	#region varaibles - Current state (rules)
-	public int m_lastDirection, m_score;
-	public bool m_onGround, m_hasControl, m_isAlive, m_canMove;
-	#endregion
-
-	#region varaibles - Current state (physics)
-	float m_dragAmount;
-	float m_moveForce = 0.05f; //how much you can move on the x
-	float m_gravity = -0.015f;// -0.015f; // how much you accelerate down
-	float m_friction = 0.5f; // ground resistance
-	float m_airResistance = 0.2f; // air resistance;
-	public Vector3 m_currentVelocity, m_currentAcceleration; //movement vectors
-	#endregion
-
-	#region varaibles - constants
+	//constants
 	const int m_numberOfRays = 5;
 	const int m_solid = 256;
 	const float maxVelocity = 0.5f;
 	#endregion
 
-	#region varaibles - Based on player number / settings
+	#region player specific varaibles
+	//rules
+	public int m_lastDirection, m_score;
+	public bool m_onGround, m_hasControl, m_isAlive, m_canMove;
+
+	//physics
+	float m_dragAmount;
+	float m_moveForce = 0.05f; //how much you can move on the x
+	float m_gravity = -0.015f;// how much you accelerate down
+	float m_friction = 0.5f; // ground resistance
+	float m_airResistance = 0.2f; // air resistance;
+	public Vector3 m_currentVelocity, m_currentAcceleration; //movement vectors
+
+	//Based on player number / settings
 	public int m_playerNumber;
 	public Color m_playerColor;
 	private bool m_analogControls = false;
-	public string m_horizontalAxis, m_verticalAxis, m_fireButton; // controls
-	public GameObject m_playerGun;
+	string m_horizontalAxis, m_verticalAxis; // controls
+	GameObject m_playerGun;
 	#endregion
 
 	#region setup methods
@@ -54,31 +52,22 @@ public class PlayerController : MonoBehaviour {
 		m_audioSource = GetComponent<AudioSource>();
 		m_particleSystem = GetComponent<ParticleSystem>();
 		m_spriteRenderer = GetComponent<SpriteRenderer>();
-		FindObjectOfType<GameManagerScript>().startGameEvent += Spawn;
+		FindObjectOfType<GameManagerScript>().startGameEvent += Respawn;
 	}
 
-	public void Spawn () {
-		//state
-		m_lastDirection = 1; m_score = 0; m_onGround = false; m_hasControl = true; m_isAlive = true; m_canMove = true;
-		m_currentVelocity = Vector3.zero; m_currentAcceleration = Vector3.zero;
-		//Player Setup (rules)
-		tag = m_playerNumber == 1 ? "Player1" : "Player2";
-		m_horizontalAxis = m_playerNumber == 1 ? "Horizontal1" : "Horizontal2";
-		m_verticalAxis = m_playerNumber == 1 ? "Vertical1" : "Vertical2";
-		m_fireButton = m_playerNumber == 1 ? "Fire1" : "Fire2";
-		m_sprites = m_playerNumber == 1 ? redSprites : blueSprites;
-		SetSprite(0);
-		m_playerColor = m_playerNumber == 1 ? Color.red : Color.blue;
+	public void Setup (string tag, string m_horizontalAxis, m_verticalAxis, fireButton, m_sprites, m_playerColor) {
+		this.tag = tag;
+		this.m_horizontalAxis = m_horizontalAxis;
+		this.m_verticalAxis = m_verticalAxis;
+		this.m_sprites = m_sprites;
+		this.m_playerColor = m_playerColor;
 		m_particleSystem.startColor = m_playerColor;
-		//Player Setup (physics)
-		TeleportTo (GameObject.FindWithTag ("GameController").GetComponent<GameManagerScript> ().GetNextRespawnPos ());
 		//Gun Setup
 		m_playerGun = Instantiate(m_gunPrefab) as GameObject;
-		m_playerGun.GetComponent<GunController>().owner = gameObject;
+		m_playerGun.GetComponent<GunController>().Setup(Transform, fireButton, m_playerColor);
 	}
 	#endregion
 
-	#region MonoBehaviour methods
 	void FixedUpdate () {
 		//see if you are on the ground
 		m_onGround = IsOnGround();
@@ -89,7 +78,6 @@ public class PlayerController : MonoBehaviour {
 		//set scale
 		m_spriteRenderer.flipX = (m_lastDirection == -1);
 	}
-	#endregion
 
 	#region Movement methods
 	void Move () {
@@ -244,18 +232,12 @@ public class PlayerController : MonoBehaviour {
 
 	#region other
 	public void Respawn () {
-		if (GameManagerScript.gameRunning) {
-			m_hasControl = true;
-			m_isAlive = true;
-			m_canMove = true;
-			//if (m_score > 0) m_score --; TODO should this exist
-			m_currentVelocity = Vector3.zero;
-			TeleportTo (GameObject.FindWithTag ("GameController").GetComponent<GameManagerScript> ().GetNextRespawnPos ());
-			//TODO meybe respawn effects?
-			SetSprite(0);
-			//reload gun
-			m_playerGun.GetComponent<GunController>().Reload();
-		}
+		m_lastDirection = 1; m_score = 0; m_onGround = false; m_hasControl = true; m_isAlive = true; m_canMove = true;
+		m_currentVelocity = Vector3.zero; m_currentAcceleration = Vector3.zero;
+		SetSprite(0);
+		m_playerGun.GetComponent<GunController>().Reload();
+		TeleportTo (GameObject.FindWithTag ("GameController").GetComponent<GameManagerScript> ().GetNextRespawnPos ());
+		//TODO maybe respawn effects?
 	}
 
 	public void Hit () {
@@ -282,6 +264,12 @@ public class PlayerController : MonoBehaviour {
 
 		SetSprite(2);
 		Invoke("Respawn", 1f);
+	}
+
+	void OnHitOtherPlayer () {
+		m_score ++;
+		StartCoroutine("BounceScore");
+		PlaySound(2);
 	}
 
 	public void PlaySound (int id) {

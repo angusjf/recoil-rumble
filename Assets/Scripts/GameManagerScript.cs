@@ -68,7 +68,7 @@ public class GameManagerScript : MonoBehaviour {
 		// get players in game
 		for (int i = 0; i < players.Length; i ++) {
 			players[i] = Instantiate (playerPrefab) as GameObject;
-			players[i].GetComponent<PlayerController> ().m_playerNumber = i + 1;
+			players[i].GetComponent<PlayerController> ().Setup(i + 1);
 		}
 
 		if (startGameEvent != null) startGameEvent();
