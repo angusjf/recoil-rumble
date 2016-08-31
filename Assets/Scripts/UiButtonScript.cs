@@ -49,19 +49,19 @@ public class UiButtonScript : MonoBehaviour {
 			//press
 			if (Input.GetButtonDown(MenuController.CONFIRM_BUTTON) && !pressed) {
 				StartCoroutine(Press());
-				mc.playSound("press");
+				mc.PlaySound("press");
 			}
 			//move up / down
 			if (Input.GetButtonDown(MenuController.UP_BUTTON) && previousElement != null) {
 				previousElement.GetComponent<UiButtonScript> ().Select ();
 				Deselect();
-				mc.playSound("move");
+				mc.PlaySound("move");
 			}
 			if (Input.GetButtonDown(MenuController.DOWN_BUTTON) && nextElement != null && !actionThisFrame) {
 				nextElement.GetComponent<UiButtonScript> ().Select (); //BROKEN
 				actionThisFrame = true; //FIX
 				Deselect();
-				mc.playSound("move");
+				mc.PlaySound("move");
 			}
 		}
 	}

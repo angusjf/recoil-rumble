@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 1273fb1be843444abb1b94fa3682c3f3
-timeCreated: 1471957654
+timeCreated: 1472399257
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -217,71 +217,6 @@ TextureImporter:
       outline: []
       tessellationDetail: -1
     - serializedVersion: 2
-      name: ui_sprites_19
-      rect:
-        serializedVersion: 2
-        x: 36
-        y: 288
-        width: 34
-        height: 27
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: -1
-    - serializedVersion: 2
-      name: ui_sprites_20
-      rect:
-        serializedVersion: 2
-        x: 36
-        y: 260
-        width: 34
-        height: 27
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: -1
-    - serializedVersion: 2
-      name: ui_sprites_21
-      rect:
-        serializedVersion: 2
-        x: 36
-        y: 232
-        width: 34
-        height: 27
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: -1
-    - serializedVersion: 2
-      name: ui_sprites_22
-      rect:
-        serializedVersion: 2
-        x: 36
-        y: 176
-        width: 34
-        height: 27
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: -1
-    - serializedVersion: 2
-      name: ui_sprites_23
-      rect:
-        serializedVersion: 2
-        x: 36
-        y: 176
-        width: 34
-        height: 27
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: -1
-    - serializedVersion: 2
       name: ui_sprites_24
       rect:
         serializedVersion: 2
@@ -454,10 +389,10 @@ TextureImporter:
       name: ui_sprites_6
       rect:
         serializedVersion: 2
-        x: 104
-        y: 303
-        width: 32
-        height: 12
+        x: 105
+        y: 304
+        width: 30
+        height: 10
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -467,10 +402,10 @@ TextureImporter:
       name: ui_sprites_7
       rect:
         serializedVersion: 2
-        x: 104
-        y: 290
-        width: 32
-        height: 12
+        x: 105
+        y: 291
+        width: 30
+        height: 10
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -480,10 +415,10 @@ TextureImporter:
       name: ui_sprites_8
       rect:
         serializedVersion: 2
-        x: 104
-        y: 277
-        width: 32
-        height: 12
+        x: 105
+        y: 278
+        width: 30
+        height: 10
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -581,19 +516,6 @@ TextureImporter:
       outline: []
       tessellationDetail: -1
     - serializedVersion: 2
-      name: ui_sprites_34
-      rect:
-        serializedVersion: 2
-        x: 57
-        y: 331
-        width: 21
-        height: 6
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: -1
-    - serializedVersion: 2
       name: ui_sprites_35
       rect:
         serializedVersion: 2
@@ -658,6 +580,19 @@ TextureImporter:
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: -1
+    - serializedVersion: 2
+      name: ui_sprites_19
+      rect:
+        serializedVersion: 2
+        x: 105
+        y: 265
+        width: 30
+        height: 10
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
     outline: []
   spritePackingTag: 
   userData: 

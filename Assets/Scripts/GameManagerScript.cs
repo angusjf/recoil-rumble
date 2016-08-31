@@ -7,6 +7,7 @@ public class GameManagerScript : MonoBehaviour {
 	public GameObject playerPrefab;
 	public GameObject block;
 	public Sprite[] blockSprites;
+	public Sprite[] redSprites, blueSprites; //alive, dead, flying
 
 	public static bool gameRunning = false;
 	public bool timedMode;
@@ -15,11 +16,11 @@ public class GameManagerScript : MonoBehaviour {
 
 	public event Action startEvent;
 	public event Action startGameEvent;
-	public event Action endGameEvent;
+	public event Action finishGameEvent;
 	public event Action pauseEvent;
 	public event Action resumeEvent;
 
-	public GameObject[] players;
+	GameObject[] players;
 	private Vector3 offset = new Vector3(-9.75f,7.25f,0);
 
 	public static List<Vector3> respawnPositions = new List<Vector3>();
@@ -37,11 +38,12 @@ public class GameManagerScript : MonoBehaviour {
 	void Update () {
 		if (GameManagerScript.gameRunning) {
 			//Pause
-			if (Input.GetButtonDown (GameManagerScript.PAUSE_BUTTON))
+			if (Input.GetButtonDown (GameManagerScript.PAUSE_BUTTON)) {
 				PauseGame ();
+			}
 			//if any player wins then end the game
 			for (int i = 0; i < players.Length; i++) {
-				if (players[i].transform.position.y < -30) {
+				if (players[i].transform.position.y < -30 && players[i].GetComponent<PlayerController>().m_isAlive) {
 					players[i].GetComponent<PlayerController>().Respawn();
 				}
 				if (players[i].GetComponent<PlayerController>().m_score >= winScore) {
@@ -68,7 +70,13 @@ public class GameManagerScript : MonoBehaviour {
 		// get players in game
 		for (int i = 0; i < players.Length; i ++) {
 			players[i] = Instantiate (playerPrefab) as GameObject;
-			players[i].GetComponent<PlayerController> ().Setup(i + 1);
+			string tag = i == 0 ? "Player1" : "Player2";
+			string hAx = i == 0 ? "Horizontal1" : "Horizontal2";
+			string vAx = i == 0 ? "Vertical1" : "Vertical2";
+			string fAx = i == 0 ? "Fire1" : "Fire2";
+			Sprite[] s = i == 0 ? redSprites : blueSprites;
+			Color colo = i == 0 ? Color.red : Color.blue;
+			players[i].GetComponent<PlayerController> ().Setup(tag, hAx, vAx, fAx, s, colo);
 		}
 
 		if (startGameEvent != null) startGameEvent();
@@ -76,18 +84,24 @@ public class GameManagerScript : MonoBehaviour {
 
 	public void EndGame() {
 		gameRunning = false;
-
-		//clean up old game
 		for (int i = 0; i < players.Length; i++) {
-			if (players[i] != null) players[i].GetComponent<PlayerController>().SafeDestroy();
+			if (players[i] != null) players[i].GetComponent<PlayerController>().destroyEvent();
 		}
 
 		foreach (GameObject o in FindObjectsOfType<GameObject>()) {
 			if (o.tag == "Solid") Destroy(o);
         }
-
 		respawnPositions.Clear(); //get rid of old respawn points
-		if (endGameEvent != null) endGameEvent();
+	}
+
+	public void FinishGame() {
+		EndGame();
+		if (finishGameEvent != null) finishGameEvent();
+	}
+
+	public void RestartGame() {
+		EndGame();
+		StartGame();
 	}
 
 	public void PauseGame() {
@@ -99,11 +113,15 @@ public class GameManagerScript : MonoBehaviour {
 	}
 
 	public void ResumeGame() {
+		gameRunning = true;
+		for (int i = 0; i < players.Length; i++) {
+			players[0].GetComponent<PlayerController>().m_canMove = true;
+		}
 		if (resumeEvent != null) resumeEvent();
 	}
 
-	public GameObject GetPlayer (int no) {
-		return players[no];
+	public GameObject[] GetPlayers () {
+		return players;
 	}
 
 	int[,] LoadMap(int num) { // load a map from text file

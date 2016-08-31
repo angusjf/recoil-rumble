@@ -6,7 +6,8 @@ public class CameraController : MonoBehaviour {
 	Camera cam;
 	GameManagerScript gameManagerScript;
 	Vector3 shake;
-	float lerpAmount = 0;
+	float lerpAmount = 1f;
+	float p = 0f;
 
 	void Start () {
 		cam = GetComponent<Camera>();
@@ -15,7 +16,7 @@ public class CameraController : MonoBehaviour {
 
 	void Update () {
 		if (GameManagerScript.gameRunning) {
-			LookAt(Vector3.Lerp (transform.position, GetAveragePosition(gameManagerScript.players) + shake, lerpAmount));
+			LookAt(Vector3.Lerp (transform.position, GetAveragePosition(gameManagerScript.GetPlayers()) * p + shake, lerpAmount));
 		}
 	}
 

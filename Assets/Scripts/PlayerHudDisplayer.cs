@@ -31,6 +31,8 @@ public class PlayerHudDisplayer : MonoBehaviour {
 		//arrow
 		arrow = Instantiate(arrowPrefab) as GameObject;
 		arrow.GetComponent<SpriteRenderer>().color = pc.m_playerColor;
+		pc.destroyEvent += DestroyElements;
+		pc.getPointEvent += BounceScore;
 	}
 	
 	void Update () {
@@ -84,7 +86,7 @@ public class PlayerHudDisplayer : MonoBehaviour {
 		}
 	}
 
-	public IEnumerator SetScoreVisibilty (bool visible) {
+	IEnumerator SetScoreVisibilty (bool visible) {
 		for (int i = 0; i < scoreCounters.Length; i ++) {
 			scoreCounters[i].GetComponent<SpriteRenderer>().enabled = visible;
 		}
@@ -95,7 +97,11 @@ public class PlayerHudDisplayer : MonoBehaviour {
 		}
 	}
 
-	public IEnumerator BounceScore () {
+	void BounceScore () {
+		StartCoroutine("BounceScoreCoroutine");
+	}
+
+	IEnumerator BounceScoreCoroutine () {
 		StartCoroutine(SetScoreVisibilty(true));
 		yield return ShortWait;
 		for (int i = 0; i < 10; i ++) {

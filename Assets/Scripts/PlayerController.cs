@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 public class PlayerController : MonoBehaviour {
 
@@ -13,10 +14,13 @@ public class PlayerController : MonoBehaviour {
 
 	//Assets
 	public AudioClip[] m_soundEffects; // land, shoot, explosion
-	public Sprite[] redSprites, blueSprites; //alive, dead, flying
 	Sprite[] m_sprites; //alive, dead, flying
 	public GameObject m_gunPrefab;
 
+	public Action destroyEvent;
+	public Action hitEvent;
+	public Action getPointEvent;
+	public Action respawnEvent;
 	//constants
 	const int m_numberOfRays = 5;
 	const int m_solid = 256;
@@ -29,23 +33,21 @@ public class PlayerController : MonoBehaviour {
 	public bool m_onGround, m_hasControl, m_isAlive, m_canMove;
 
 	//physics
+	const float m_moveForce = 0.05f;	//how much you can move on the x
+	const float m_gravity = -0.015f;	//how much you accelerate down
+	const float m_friction = 0.5f;		//ground resistance
+	const float m_airResistance = 0.2f;	//air resistance;
 	float m_dragAmount;
-	float m_moveForce = 0.05f; //how much you can move on the x
-	float m_gravity = -0.015f;// how much you accelerate down
-	float m_friction = 0.5f; // ground resistance
-	float m_airResistance = 0.2f; // air resistance;
 	public Vector3 m_currentVelocity, m_currentAcceleration; //movement vectors
 
 	//Based on player number / settings
 	public int m_playerNumber;
 	public Color m_playerColor;
-	private bool m_analogControls = false;
-	string m_horizontalAxis, m_verticalAxis; // controls
-	GameObject m_playerGun;
+	private bool m_analogControls = true;
+	public string m_horizontalAxis, m_verticalAxis; // controls
 	#endregion
 
-	#region setup methods
-	void Awake () {
+	public void Setup (string tag, string m_horizontalAxis, string m_verticalAxis, string fireButton, Sprite[] m_sprites, Color m_playerColor) {
 		//Componant / GameObject references
 		cameraController = Camera.main.GetComponent<CameraController>();
 		m_boxCollider = GetComponent<BoxCollider2D>();
@@ -53,9 +55,8 @@ public class PlayerController : MonoBehaviour {
 		m_particleSystem = GetComponent<ParticleSystem>();
 		m_spriteRenderer = GetComponent<SpriteRenderer>();
 		FindObjectOfType<GameManagerScript>().startGameEvent += Respawn;
-	}
-
-	public void Setup (string tag, string m_horizontalAxis, m_verticalAxis, fireButton, m_sprites, m_playerColor) {
+		destroyEvent += Destroy;
+		//setup
 		this.tag = tag;
 		this.m_horizontalAxis = m_horizontalAxis;
 		this.m_verticalAxis = m_verticalAxis;
@@ -63,20 +64,18 @@ public class PlayerController : MonoBehaviour {
 		this.m_playerColor = m_playerColor;
 		m_particleSystem.startColor = m_playerColor;
 		//Gun Setup
-		m_playerGun = Instantiate(m_gunPrefab) as GameObject;
-		m_playerGun.GetComponent<GunController>().Setup(Transform, fireButton, m_playerColor);
+		GameObject m_playerGun = Instantiate(m_gunPrefab) as GameObject;
+		m_playerGun.GetComponent<GunController>().Setup(gameObject, fireButton, m_playerColor);
 	}
-	#endregion
 
 	void FixedUpdate () {
 		//see if you are on the ground
 		m_onGround = IsOnGround();
 		//which direction to fire / move in
 		if (Mathf.Abs(Input.GetAxisRaw(m_horizontalAxis)) > 0) m_lastDirection = (int)Mathf.Sign(Input.GetAxisRaw(m_horizontalAxis));
-		//move
-		if (m_canMove) { Move(); }
+		if (m_canMove) Move();
 		//set scale
-		m_spriteRenderer.flipX = (m_lastDirection == -1);
+		m_spriteRenderer.flipX = m_lastDirection == -1;
 	}
 
 	#region Movement methods
@@ -230,17 +229,17 @@ public class PlayerController : MonoBehaviour {
 	}
 	#endregion
 
-	#region other
 	public void Respawn () {
 		m_lastDirection = 1; m_score = 0; m_onGround = false; m_hasControl = true; m_isAlive = true; m_canMove = true;
 		m_currentVelocity = Vector3.zero; m_currentAcceleration = Vector3.zero;
-		SetSprite(0);
-		m_playerGun.GetComponent<GunController>().Reload();
+		GetComponent<SpriteRenderer>().sprite = m_sprites[0]; // keep without method
 		TeleportTo (GameObject.FindWithTag ("GameController").GetComponent<GameManagerScript> ().GetNextRespawnPos ());
+		respawnEvent();
 		//TODO maybe respawn effects?
 	}
 
 	public void Hit () {
+		if (hitEvent != null) hitEvent();
 		StartCoroutine("HitEffects");
 	}
 
@@ -266,9 +265,9 @@ public class PlayerController : MonoBehaviour {
 		Invoke("Respawn", 1f);
 	}
 
-	void OnHitOtherPlayer () {
+	public void OnHitOtherPlayer () {
+		if (getPointEvent != null) getPointEvent();
 		m_score ++;
-		StartCoroutine("BounceScore");
 		PlaySound(2);
 	}
 
@@ -290,10 +289,7 @@ public class PlayerController : MonoBehaviour {
 		}
 	}
 
-	public void SafeDestroy () {
-		GetComponent<PlayerHudDisplayer>().DestroyElements();
-		Destroy(m_playerGun);
+	public void Destroy () {
 		Destroy(gameObject);
 	}
-	#endregion
 }

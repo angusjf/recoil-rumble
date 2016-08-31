@@ -15,8 +15,7 @@ public class MenuController : MonoBehaviour {
 	public Sprite titleImage, mapsTitleImage, modesTitleImage, twitterImage1, twitterImage2,
 		pausedImage, player1WinImage, player2WinImage, optionsTitleImage, creditsTitleImage;
 	public Sprite[] wordSprites;
-	public Sprite[] redTallySprites;
-	public Sprite[] blueTallySprites;
+	public Sprite[] tallySprites;
 	public Sprite[] mapButtonSprites;
 
 	public AudioClip moveSound;
@@ -29,7 +28,11 @@ public class MenuController : MonoBehaviour {
 	void Awake () {
 		gameManagerScript = GameObject.FindWithTag("GameController").GetComponent<GameManagerScript>();
 		audioSource = GetComponent<AudioSource>();
+		gameManagerScript.startGameEvent += HideMenu;
 		gameManagerScript.startEvent += ShowMainMenu;
+		gameManagerScript.finishGameEvent += ShowEndMenu;
+		gameManagerScript.pauseEvent += ShowPauseMenu;
+		gameManagerScript.resumeEvent += HideMenu;
 	}
 
 	private void HideMenu () { //clears the list
@@ -52,6 +55,12 @@ public class MenuController : MonoBehaviour {
 	private void CreateImage (Vector3 position, Sprite image) { //only way to instantiate a button
 		uiElements.Add(Instantiate(imagePrefab, position, Quaternion.identity) as GameObject);
 		uiElements[uiElements.Count - 1].GetComponent<SpriteRenderer>().sprite = image; //TODO
+	}
+
+	private void CreateImage (Vector3 position, Sprite image, Color color) { //only way to instantiate a button
+		uiElements.Add(Instantiate(imagePrefab, position, Quaternion.identity) as GameObject);
+		uiElements[uiElements.Count - 1].GetComponent<SpriteRenderer>().sprite = image; //TODO
+		uiElements[uiElements.Count - 1].GetComponent<SpriteRenderer>().color = color; //TODO
 	}
 
 	private void ShowMainMenu () {
@@ -133,49 +142,42 @@ public class MenuController : MonoBehaviour {
 		Application.OpenURL("http://findlang.github.io/");
 	}
 
-	void RetryGame () {
-		gameManagerScript.StartGame();
-		HideMenu();
-	}
-
 	void StopGame () {
 		gameManagerScript.EndGame();
-		HideMenu();
+		ShowMainMenu();
 	}
 
 	private void ShowPauseMenu () {		//PAUSE
-		//Instantiate pause image
 		CreateImage(new Vector3(0,2f,0), pausedImage);
-		//TODO RESUME
-		//TODO RESTART
-		//TODO MENU
-		CreateButton(new Vector3(0,0f, 0), RetryGame, null, 0);
-		CreateButton(new Vector3(0,-1f, 0), StopGame, uiElements[uiElements.Count - 1], 6);
+		CreateButton(new Vector3(0,-0f, 0), gameManagerScript.ResumeGame, null, 14);
+		CreateButton(new Vector3(0,-1f, 0), gameManagerScript.RestartGame, uiElements[uiElements.Count - 1], 8);
+		CreateButton(new Vector3(0,-2f, 0), StopGame, uiElements[uiElements.Count - 1], 9);
 	}
 
-	/*
 	private void ShowEndMenu () {		//END
 		// Title Image
-	    if (gameManagerScript.winner.tag == "Player1") {
+	    if (gameManagerScript.winner == null) {
+	    	//no winner
+	    } else if (gameManagerScript.winner.tag == "Player1") {
 	    	CreateImage(new Vector3(0,2f,0), player1WinImage);
 		} else if (gameManagerScript.winner.tag == "Player2") {
 			CreateImage(new Vector3(0,2f,0), player2WinImage);
-		} else {
-			//no winner...
 		}
 		//score 1 TODO
-		CreateImage(new Vector3(-3,-1.2f,0),
-			redTallySprites[gameManagerScript.GetPlayer(1).GetComponent<PlayerController>().m_score]);
 
-		//score 2 TODO
-		CreateImage(new Vector3(3,-1.2f,0),
-			blueTallySprites[gameManagerScript.GetPlayer(2).GetComponent<PlayerController>().m_score]);
+		for (int i = 0; i < gameManagerScript.GetPlayers().Length; i++) {
+			CreateImage(
+				new Vector3(-3 + 6 * i,-1.2f,0),
+				tallySprites[gameManagerScript.GetPlayers()[i].GetComponent<PlayerController>().m_score],
+				gameManagerScript.GetPlayers()[i].GetComponent<PlayerController>().m_playerColor
+			);
+		}
 
-		CreateButton(new Vector3(0,-3f, 0), false, "points", null, 8); //TODO change it to current mode eg "timed"
-		CreateButton(new Vector3(0,-4f, 0), true, "main", uiElements[uiElements.Count - 1], 9);
+		CreateButton(new Vector3(0,-3f, 0), ShowModeMenu, null, 8); //TODO change it to current mode eg "timed"
+		CreateButton(new Vector3(0,-4f, 0), ShowMainMenu, uiElements[uiElements.Count - 1], 9);
 	}
-	*/
-	public void playSound(string name) {
+
+	public void PlaySound(string name) {
 		if (name == "move") {
 			audioSource.PlayOneShot(moveSound);
 		} else if (name == "press") {
