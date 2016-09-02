@@ -15,7 +15,7 @@ public class GunController : MonoBehaviour {
 	float maxInaccuracy = 0.05f;
 	float recoilForce = 0.3f;
 	float shootForce = 20f;
-	bool isHeld = true;
+	bool isHeld = false;
 	Vector3 velocity;
 	Vector3 direction = Vector3.right;
 	private bool upButton, leftButton, downButton, rightButton;
@@ -25,6 +25,7 @@ public class GunController : MonoBehaviour {
 		this.owner = owner;
 		this.fireButton = fireButton;
 		GetComponent<SpriteRenderer>().color = color;
+		isHeld = true;
 		cameraController = Camera.main.GetComponent<CameraController>();
 		playerController = owner.GetComponent<PlayerController>();
 		playerController.destroyEvent += Destroy;
@@ -50,7 +51,7 @@ public class GunController : MonoBehaviour {
 			transform.position += velocity;
 		}
 
-		if (ammo != maxAmmo && cameraController.IsOnScreen(owner.transform.position)) Reload();
+		if (ammo != maxAmmo && isHeld && cameraController.IsOnScreen(owner.transform.position)) Reload();
 	}
 
 	void Drop() {
@@ -105,8 +106,8 @@ public class GunController : MonoBehaviour {
 	}
 
 	Vector3 GetDirection () {
-		string xAxis = playerController.m_horizontalAxis;
-		string yAxis = playerController.m_verticalAxis;
+		string xAxis = "playerController.m_horizontalAxis";
+		string yAxis = "playerController.m_verticalAxis";
 
 		upButton = Input.GetAxisRaw(yAxis) > 0;
 		leftButton = Input.GetAxisRaw(xAxis) < 0;

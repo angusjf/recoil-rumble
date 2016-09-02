@@ -5,7 +5,7 @@
 		_MainTex("Texture", 2D) = "white" {}
 		_Black("Black", Color) = (0.2,0.2,0.2,1)
 		_White("White", Color) = (0.9,0.1,0.1,1)
-		_Red("Red", Color) = (0.9,0.2,0.1,1)
+		_Red("Red", Color) = (0,0,0)// = (0.9,0.2,0.1,1)
 		_Blue("Blue", Color) = (0.1,0.3,0.9,1)
 
 	} SubShader {

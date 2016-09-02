@@ -33,7 +33,6 @@ public class PlayerController : MonoBehaviour {
 	public bool m_onGround, m_hasControl, m_isAlive, m_canMove;
 
 	//physics
-	const float m_moveForce = 0.05f;	//how much you can move on the x
 	const float m_gravity = -0.015f;	//how much you accelerate down
 	const float m_friction = 0.5f;		//ground resistance
 	const float m_airResistance = 0.2f;	//air resistance;
@@ -41,10 +40,7 @@ public class PlayerController : MonoBehaviour {
 	public Vector3 m_currentVelocity, m_currentAcceleration; //movement vectors
 
 	//Based on player number / settings
-	public int m_playerNumber;
 	public Color m_playerColor;
-	private bool m_analogControls = true;
-	public string m_horizontalAxis, m_verticalAxis; // controls
 	#endregion
 
 	public void Setup (string tag, string m_horizontalAxis, string m_verticalAxis, string fireButton, Sprite[] m_sprites, Color m_playerColor) {
@@ -58,53 +54,36 @@ public class PlayerController : MonoBehaviour {
 		destroyEvent += Destroy;
 		//setup
 		this.tag = tag;
-		this.m_horizontalAxis = m_horizontalAxis;
-		this.m_verticalAxis = m_verticalAxis;
+		//this.m_horizontalAxis = m_horizontalAxis;
+		//this.m_verticalAxis = m_verticalAxis;
 		this.m_sprites = m_sprites;
 		this.m_playerColor = m_playerColor;
 		m_particleSystem.startColor = m_playerColor;
-		//Gun Setup
-		GameObject m_playerGun = Instantiate(m_gunPrefab) as GameObject;
-		m_playerGun.GetComponent<GunController>().Setup(gameObject, fireButton, m_playerColor);
+		//(Instantiate(m_gunPrefab) as GameObject).GetComponent<GunController>().Setup(gameObject, fireButton, m_playerColor);//Gun Setup
 	}
 
 	void FixedUpdate () {
-		//see if you are on the ground
 		m_onGround = IsOnGround();
-		//which direction to fire / move in
-		if (Mathf.Abs(Input.GetAxisRaw(m_horizontalAxis)) > 0) m_lastDirection = (int)Mathf.Sign(Input.GetAxisRaw(m_horizontalAxis));
 		if (m_canMove) Move();
-		//set scale
+		if (Mathf.Abs(m_currentVelocity.x) > 0.2f) m_lastDirection = (int)Mathf.Sign(m_currentVelocity.x);
 		m_spriteRenderer.flipX = m_lastDirection == -1;
 	}
 
 	#region Movement methods
 	void Move () {
-		// controls => movement
-		if (m_hasControl) {
-			if (m_analogControls)
-				m_currentAcceleration.x = Input.GetAxisRaw(m_horizontalAxis);
-			else
-				m_currentAcceleration.x = Input.GetAxisRaw(m_horizontalAxis) == 0 ? m_currentAcceleration.x = 0 : Input.GetAxisRaw(m_horizontalAxis) > 0 ? 1 : -1;
-			m_currentAcceleration.x *= m_moveForce;
-		} else {
-			m_currentAcceleration.x = 0;
-		}
-
 		//drag on x
-		if (m_onGround) { // friction from 'feet in the ground'
-			m_dragAmount = m_friction;
-		} else { // in the sky
-			m_dragAmount = m_airResistance;
-		}
+		m_dragAmount = m_onGround ? m_friction : m_airResistance;
 
-		//apply drag on x only if in control TODO?
-		m_currentAcceleration.x = m_hasControl ? m_currentAcceleration.x + Mathf.Sign(m_currentVelocity.x) * -Mathf.Abs(m_currentVelocity.x) * m_dragAmount : 0; // TODO
+		//apply drag on x (only if in control)
+		if (m_hasControl)
+			m_currentAcceleration.x -= Mathf.Sign(m_currentVelocity.x) * Mathf.Abs(m_currentAcceleration.x) * m_dragAmount;
+		else
+			m_currentAcceleration.x = 0;
 
 		//gravity
-		if (!m_onGround) {
+		if (!m_onGround)
 			m_currentAcceleration.y = m_gravity;
-		} else {
+		else {
 			m_currentVelocity.y = 0;
 			m_currentAcceleration.y = 0;
 		}
@@ -132,7 +111,7 @@ public class PlayerController : MonoBehaviour {
 	float DistanceToSolid (bool horizontal) {
 		/* takes in a bool (vertical / horizontal).
 		 * and return a value of how far away the nearest solid is.
-		 * positive = down; negative = down.
+		 * positive = down; negative = up.
 		 * returns wired numbers for errors (positive or negative).
 		 */
 		float[] distances = new float[m_numberOfRays];
@@ -205,26 +184,24 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void SetPosition () {
-		// v += a
 		m_currentVelocity += m_currentAcceleration;
-		// v = s [without collisions]
-		Vector3 displacement = new Vector3();
+		Vector3 displacement = Vector3.zero;
 
 		// x collisions
 		if (Mathf.Abs(m_currentVelocity.x) > Mathf.Abs(DistanceToSolid(true))) {
 			displacement.x = DistanceToSolid(true);
+			m_currentVelocity.y = 0;
 		} else {
-			displacement.x = m_currentVelocity.x; //remove block
+			displacement.x = m_currentVelocity.x;
 		}
 		// y collisions
 		if ((m_currentVelocity.y > 0 && m_currentVelocity.y > DistanceToSolid(false)) || (m_currentVelocity.y < 0 && m_currentVelocity.y < DistanceToSolid(false))) {
 			displacement.y = DistanceToSolid(false);
-			m_currentVelocity.y = 0; // HACK experimental
+			m_currentVelocity.y = 0;
 		} else {
-			displacement.y = m_currentVelocity.y; //remove block
+			displacement.y = m_currentVelocity.y;
 		}
 
-		// move it
 		transform.position += displacement;
 	}
 	#endregion
@@ -234,7 +211,7 @@ public class PlayerController : MonoBehaviour {
 		m_currentVelocity = Vector3.zero; m_currentAcceleration = Vector3.zero;
 		GetComponent<SpriteRenderer>().sprite = m_sprites[0]; // keep without method
 		TeleportTo (GameObject.FindWithTag ("GameController").GetComponent<GameManagerScript> ().GetNextRespawnPos ());
-		respawnEvent();
+		if (respawnEvent != null) respawnEvent();
 		//TODO maybe respawn effects?
 	}
 
