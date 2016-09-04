@@ -43,10 +43,10 @@ public class GameManagerScript : MonoBehaviour {
 			}
 			//if any player wins then end the game
 			for (int i = 0; i < players.Length; i++) {
-				if (players[i].transform.position.y < -30 && players[i].GetComponent<PlayerController>().m_isAlive) {
+				if (players[i].transform.position.y < -10 && players[i].GetComponent<PlayerController>().isAlive) {
 					players[i].GetComponent<PlayerController>().Respawn();
 				}
-				if (players[i].GetComponent<PlayerController>().m_score >= winScore) {
+				if (players[i].GetComponent<PlayerController>().score >= winScore) {
 					winner = players[i];
 					EndGame ();
 				}
@@ -107,7 +107,7 @@ public class GameManagerScript : MonoBehaviour {
 	public void PauseGame() {
 		gameRunning = false;
 		for (int i = 0; i < players.Length; i++) {
-			players[0].GetComponent<PlayerController>().m_canMove = false;
+			players[0].GetComponent<PlayerController>().canMove = false;
 		}
 		if (pauseEvent != null) pauseEvent();
 	}
@@ -115,7 +115,7 @@ public class GameManagerScript : MonoBehaviour {
 	public void ResumeGame() {
 		gameRunning = true;
 		for (int i = 0; i < players.Length; i++) {
-			players[0].GetComponent<PlayerController>().m_canMove = true;
+			players[0].GetComponent<PlayerController>().canMove = true;
 		}
 		if (resumeEvent != null) resumeEvent();
 	}

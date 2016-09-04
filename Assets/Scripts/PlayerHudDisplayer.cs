@@ -41,14 +41,14 @@ public class PlayerHudDisplayer : MonoBehaviour {
 	}
 
 	void UpdateCounterVisiblity () {
-		if (pc.m_score > scoreCounters.Length) return;
+		if (pc.score > scoreCounters.Length) return;
 
 		//enable counters that need to be
-		for (int i = 0; i < pc.m_score; i ++) {
+		for (int i = 0; i < pc.score; i ++) {
 			scoreCounters[i].GetComponent<SpriteRenderer>().sprite = starSprites[1];
 		}
 		//disable others
-		for (int i = scoreCounters.Length - 1; i >= pc.m_score; i --) {
+		for (int i = scoreCounters.Length - 1; i >= pc.score; i --) {
 			scoreCounters[i].GetComponent<SpriteRenderer>().sprite = starSprites[0];
 		}
 
@@ -105,7 +105,7 @@ public class PlayerHudDisplayer : MonoBehaviour {
 		StartCoroutine(SetScoreVisibilty(true));
 		yield return ShortWait;
 		for (int i = 0; i < 10; i ++) {
-			scoreCounters[pc.m_score - 1].transform.position += (i < 5 ? 0.05f : -0.05f) * Vector3.up;
+			scoreCounters[pc.score - 1].transform.position += (i < 5 ? 0.05f : -0.05f) * Vector3.up;
 			yield return null;
 		}
 	}

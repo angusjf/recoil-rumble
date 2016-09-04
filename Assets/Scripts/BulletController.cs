@@ -35,16 +35,16 @@ public class BulletController : MonoBehaviour {
 
 	void HitPlayer(GameObject player) {
 		// only do this if its not already dead
-		if (player.GetComponent<PlayerController>().m_isAlive) {
+		if (player.GetComponent<PlayerController>().isAlive) {
 			if (hitPlayerEvent != null) hitPlayerEvent();
 			player.gameObject.GetComponent<PlayerController>().Hit();
 		}
 
 		// bullet hit back
-		if (player.GetComponent<PlayerController>().m_onGround && velocity.y < 0) {
+		if (player.GetComponent<Custom2dPhysics>().IsOnGround() && velocity.y < 0) {
 			velocity.y = -velocity.y;
 		}
-		player.GetComponent<PlayerController>().AddForce(velocity * hitForce);
+		player.GetComponent<Custom2dPhysics>().AddVelocity(velocity * hitForce);
 
 		// hit sound / Explosion? HACK - TODO move to bullet 
 	}

@@ -168,7 +168,7 @@ public class MenuController : MonoBehaviour {
 		for (int i = 0; i < gameManagerScript.GetPlayers().Length; i++) {
 			CreateImage(
 				new Vector3(-3 + 6 * i,-1.2f,0),
-				tallySprites[gameManagerScript.GetPlayers()[i].GetComponent<PlayerController>().m_score],
+				tallySprites[gameManagerScript.GetPlayers()[i].GetComponent<PlayerController>().score],
 				gameManagerScript.GetPlayers()[i].GetComponent<PlayerController>().m_playerColor
 			);
 		}

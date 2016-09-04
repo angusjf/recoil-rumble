@@ -12,7 +12,6 @@ public class GunController : MonoBehaviour {
 	//stuff that can change
 	public int maxAmmo = 3;
 	public int ammo;
-	float maxInaccuracy = 0.05f;
 	float recoilForce = 0.3f;
 	float shootForce = 20f;
 	bool isHeld = false;
@@ -31,7 +30,6 @@ public class GunController : MonoBehaviour {
 		playerController.destroyEvent += Destroy;
 		playerController.hitEvent += Drop;
 		playerController.respawnEvent += PickUp;
-
 		muzzleFlash = Instantiate(muzzleFlash, transform.position + new Vector3 (0.26f,0.0333f,0), Quaternion.identity) as GameObject;
 		muzzleFlash.transform.parent = transform;
 		muzzleFlash.SetActive(false);
@@ -44,7 +42,7 @@ public class GunController : MonoBehaviour {
 			direction = GetDirection();
 			transform.localRotation = Quaternion.Lerp(transform.localRotation, Quaternion.Euler(new Vector3(0,0,Mathf.Atan(direction.y / direction.x) * Mathf.Rad2Deg)), 0.5f);
 			GetComponent<SpriteRenderer>().flipX = direction.x == -1;
-			Vector3 destination = new Vector3(owner.transform.position.x + playerController.m_lastDirection * 0.25f,owner.transform.position.y, 0);
+			Vector3 destination = new Vector3(owner.transform.position.x + (owner.GetComponent<PlayerController>().facingLeft ? -1 : 1) * 0.25f,owner.transform.position.y, 0);
 			transform.position = Vector3.Lerp(transform.position, destination, 0.75f);
 		} else {
 			velocity += new Vector3(0,-0.015f,0);
@@ -71,7 +69,7 @@ public class GunController : MonoBehaviour {
 		if (ammo > 0) {
 			GameObject newBullet = Instantiate(bullet, owner.transform.position + direction * 0.5f, Quaternion.identity) as GameObject;
 			//fire in that direction + players velocity
-			newBullet.GetComponent<BulletController>().velocity = direction * shootForce + playerController.m_currentVelocity;
+			newBullet.GetComponent<BulletController>().velocity = direction * shootForce + owner.GetComponent<Custom2dPhysics>().GetVelocity();
 			newBullet.GetComponent<BulletController>().hitPlayerEvent += owner.GetComponent<PlayerController>().OnHitOtherPlayer;
 			StartCoroutine("ShootFx");
 			ammo--;
@@ -82,10 +80,10 @@ public class GunController : MonoBehaviour {
 
 	public IEnumerator ShootFx () {
 		// RECOIL
-		if (playerController.m_onGround && direction.y > 0) { //shooting on the ground
-			playerController.AddForce (new Vector3(-direction.x * recoilForce + Random.Range(-recoilForce, recoilForce), -direction.y * recoilForce, 0));
+		if (owner.GetComponent<Custom2dPhysics>().IsOnGround() && direction.y > 0) { //shooting on the ground
+			owner.GetComponent<Custom2dPhysics>().AddVelocity (new Vector3(-direction.x * recoilForce + Random.Range(-recoilForce, recoilForce), -direction.y * recoilForce, 0));
 		} else {
-			playerController.AddForce (-direction * recoilForce);
+			owner.GetComponent<Custom2dPhysics>().AddVelocity (-direction * recoilForce);
 		}
 		//screenshake
 		cameraController.StartScreenShake(0.1f,2);
