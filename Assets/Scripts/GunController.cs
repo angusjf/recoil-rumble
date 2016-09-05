@@ -1,10 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent (typeof(AudioSource))]
 public class GunController : MonoBehaviour {
 
 	CameraController cameraController;
 	SpriteRenderer spriteRenderer;
+	AudioSource audioSource;
 	public GameObject bullet;
 	public GameObject muzzleFlash;
 	GameObject owner;
@@ -19,6 +21,7 @@ public class GunController : MonoBehaviour {
 	Vector3 direction = Vector3.right;
 	private bool upButton, leftButton, downButton, rightButton;
 	string fireButton;
+	[SerializeField] AudioClip fireSound, clickSound;
 
 	public void Setup (GameObject owner, string fireButton, Color color) {
 		this.owner = owner;
@@ -26,6 +29,7 @@ public class GunController : MonoBehaviour {
 		GetComponent<SpriteRenderer>().color = color;
 		isHeld = true;
 		cameraController = Camera.main.GetComponent<CameraController>();
+		audioSource = GetComponent<AudioSource>();
 		playerController = owner.GetComponent<PlayerController>();
 		playerController.destroyEvent += Destroy;
 		playerController.hitEvent += Drop;
@@ -43,7 +47,7 @@ public class GunController : MonoBehaviour {
 			transform.localRotation = Quaternion.Lerp(transform.localRotation, Quaternion.Euler(new Vector3(0,0,Mathf.Atan(direction.y / direction.x) * Mathf.Rad2Deg)), 0.5f);
 			GetComponent<SpriteRenderer>().flipX = direction.x == -1;
 			Vector3 destination = new Vector3(owner.transform.position.x + (owner.GetComponent<PlayerController>().facingLeft ? -1 : 1) * 0.25f,owner.transform.position.y, 0);
-			transform.position = Vector3.Lerp(transform.position, destination, 0.75f);
+			transform.position = Vector3.Lerp(transform.position, destination, 0.6f);
 		} else {
 			velocity += new Vector3(0,-0.015f,0);
 			transform.position += velocity;
@@ -74,7 +78,7 @@ public class GunController : MonoBehaviour {
 			StartCoroutine("ShootFx");
 			ammo--;
 		} else {
-			PlaySound(3); //click
+			PlaySound(clickSound);
 		}
 	}
 
@@ -88,7 +92,7 @@ public class GunController : MonoBehaviour {
 		//screenshake
 		cameraController.StartScreenShake(0.1f,2);
 		//make sound
-		PlaySound(1); //TODO move to gune
+		PlaySound(fireSound);
 		//muzzle flash on
 		muzzleFlash.SetActive(true);
 		//recoil out
@@ -104,8 +108,8 @@ public class GunController : MonoBehaviour {
 	}
 
 	Vector3 GetDirection () {
-		string xAxis = "playerController.m_horizontalAxis";
-		string yAxis = "playerController.m_verticalAxis";
+		string xAxis = playerController.horizontalAxis;
+		string yAxis = playerController.verticalAxis;
 
 		upButton = Input.GetAxisRaw(yAxis) > 0;
 		leftButton = Input.GetAxisRaw(xAxis) < 0;
@@ -123,8 +127,8 @@ public class GunController : MonoBehaviour {
 		return direction;
 	}
 
-	void PlaySound(int n) {
-		owner.GetComponent<PlayerController>().PlaySound(n);
+	void PlaySound(AudioClip clip) {
+		audioSource.PlayOneShot(clip);
 	}
 
 	void Destroy () {

@@ -24,15 +24,16 @@ public class GameManagerScript : MonoBehaviour {
 	private Vector3 offset = new Vector3(-9.75f,7.25f,0);
 
 	public static List<Vector3> respawnPositions = new List<Vector3>();
-	private int nextRespawnPositionCounter = 0;
+	private byte nextRespawnPositionCounter = 0;
 
-	public int currentMapNumber;
-	int[,] currentMap = new int[30,40];
+	public byte currentMapNumber;
+	byte[,] currentMap = new byte[30,40];
 
 	const string PAUSE_BUTTON = "Pause";
 
 	void Start () {
 		startEvent();
+		StartGame();
 	}
 
 	void Update () {
@@ -43,7 +44,7 @@ public class GameManagerScript : MonoBehaviour {
 			}
 			//if any player wins then end the game
 			for (int i = 0; i < players.Length; i++) {
-				if (players[i].transform.position.y < -10 && players[i].GetComponent<PlayerController>().isAlive) {
+				if (players[i].transform.position.y < -13 && players[i].GetComponent<PlayerController>().isAlive) {
 					players[i].GetComponent<PlayerController>().Respawn();
 				}
 				if (players[i].GetComponent<PlayerController>().score >= winScore) {
@@ -60,7 +61,7 @@ public class GameManagerScript : MonoBehaviour {
 	}
 
 	public void StartGame () {
-		players = new GameObject[1];
+		players = new GameObject[2];
 		gameRunning = true;
 
 		// get map in game
@@ -73,10 +74,11 @@ public class GameManagerScript : MonoBehaviour {
 			string tag = i == 0 ? "Player1" : "Player2";
 			string hAx = i == 0 ? "Horizontal1" : "Horizontal2";
 			string vAx = i == 0 ? "Vertical1" : "Vertical2";
+			string jAx = i == 0 ? "Jump1" : "Jump2";
 			string fAx = i == 0 ? "Fire1" : "Fire2";
 			Sprite[] s = i == 0 ? redSprites : blueSprites;
 			Color colo = i == 0 ? Color.red : Color.blue;
-			players[i].GetComponent<PlayerController> ().Setup(tag, hAx, vAx, fAx, s, colo);
+			players[i].GetComponent<PlayerController> ().Setup(tag, hAx, vAx, jAx, fAx, s, colo);
 		}
 
 		if (startGameEvent != null) startGameEvent();
@@ -124,14 +126,14 @@ public class GameManagerScript : MonoBehaviour {
 		return players;
 	}
 
-	int[,] LoadMap(int num) { // load a map from text file
+	byte[,] LoadMap(byte num) { // load a map from text file
 		string mapsString = System.IO.File.ReadAllText(@"Assets/maps.txt");
 		string mapString = mapsString.Split('-')[num];
 		mapString = mapString.Replace("\n","");
-		int[,] map = new int[40,30];
+		byte[,] map = new byte[40,30];
 		int x = 0, y = 0;
 		for (int i = 0; i < mapString.Length; i++) {
-			map[x,y] = int.Parse(mapString.Substring(i,1));
+			map[x,y] = byte.Parse(mapString.Substring(i,1));
 			x++;
 			if (x >= 40) {
 				x = 0;
@@ -141,7 +143,7 @@ public class GameManagerScript : MonoBehaviour {
 		return map;
 	}
 
-	void GenerateLevel (int[,] map) { // make a new level from a map
+	void GenerateLevel (byte[,] map) { // make a new level from a map
 		for (int y = 0; y < map.GetLength(1); y ++) {
 			for (int x = 0; x < map.GetLength(0); x ++) {
 				if (map[x,y] == 1) {

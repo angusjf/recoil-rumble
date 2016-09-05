@@ -6,11 +6,11 @@ using System;
 public class PlayerController : MonoBehaviour {
 	CameraController cameraController;
 	AudioSource audioSource;
-	ParticleSystem particleSystem;
+	new ParticleSystem particleSystem;
 	SpriteRenderer spriteRenderer;
 	Custom2dPhysics movement;
 
-	public AudioClip[] soundEffects; // land, shoot, explosion
+	public AudioClip dieSound; // land, shoot, explosion
 	public GameObject gunPrefab;
 	Sprite[] sprites; //alive, dead, flying
 
@@ -26,14 +26,15 @@ public class PlayerController : MonoBehaviour {
 	public bool hasControl, isAlive, canMove;
 
 	//Based on player number / settings
-	public Color m_playerColor;
+	public Color playerColor;
 	
-	string horizontalAxis, verticalAxis; // controls
+	public string horizontalAxis, verticalAxis, jumpButton; // controls
 	const float moveForce = 0.02f;	//how much you can move on the x
 
-	public void Setup (string tag, string m_horizontalAxis, string m_verticalAxis, string fireButton, Sprite[] m_sprites, Color m_playerColor) {
+	public void Setup (string tag, string horizontalAxis, string verticalAxis, string jumpButton, string fireButton, Sprite[] sprites, Color playerColor) {
 		//Componant / GameObject references
 		movement = GetComponent<Custom2dPhysics>();
+		movement.canMove = true;
 		cameraController = Camera.main.GetComponent<CameraController>();
 		audioSource = GetComponent<AudioSource>();
 		particleSystem = GetComponent<ParticleSystem>();
@@ -42,12 +43,13 @@ public class PlayerController : MonoBehaviour {
 		destroyEvent += Destroy;
 		//setup
 		this.tag = tag;
-		this.horizontalAxis = m_horizontalAxis;
-		this.verticalAxis = m_verticalAxis;
-		this.sprites = m_sprites;
-		this.m_playerColor = m_playerColor;
-		particleSystem.startColor = m_playerColor;
-		(Instantiate(gunPrefab) as GameObject).GetComponent<GunController>().Setup(gameObject, fireButton, m_playerColor);//Gun Setup 
+		this.horizontalAxis = horizontalAxis;
+		this.verticalAxis = verticalAxis;
+		this.jumpButton = jumpButton;
+		this.sprites = sprites;
+		this.playerColor = playerColor;
+		particleSystem.startColor = playerColor;
+		(Instantiate(gunPrefab) as GameObject).GetComponent<GunController>().Setup(gameObject, fireButton, playerColor);//Gun Setup 
 		score = 0;
 	}
 
@@ -68,7 +70,7 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void Y () {
-		bool y = Input.GetButtonDown(verticalAxis);
+		bool y = Input.GetButtonDown(jumpButton);
 
 		if (y && movement.IsOnGround())
 			movement.AddVelocity(Vector3.up * 0.25f);
@@ -112,12 +114,12 @@ public class PlayerController : MonoBehaviour {
 
 	public void OnHitOtherPlayer () {
 		if (getPointEvent != null) getPointEvent();
-		score ++;
-		PlaySound(2);
+		score++;
+		PlaySound(dieSound);
 	}
 
-	public void PlaySound (int id) {
-		audioSource.PlayOneShot(soundEffects[id]);
+	public void PlaySound (AudioClip clip) {
+		audioSource.PlayOneShot(clip);
 	}
 
 	public void SetSprite (int id) {

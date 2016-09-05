@@ -7,7 +7,7 @@ public class ChangeColors : MonoBehaviour {
 	public enum ColorPalette { LIGHT, DARK, GAMEBOY }
 
 	void Start () {
-		SetColorScheme(ColorPalette.LIGHT);
+		SetColorScheme(ColorPalette.DARK);
 	}
 
 	public void SetColorScheme (ColorPalette colorScheme) {

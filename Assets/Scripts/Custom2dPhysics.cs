@@ -22,25 +22,28 @@ public class Custom2dPhysics : MonoBehaviour {
 		boxCollider = GetComponent<BoxCollider2D>();
 	}
 
-	void Start () {
-		canMove = true;
-	}
-
 	void FixedUpdate () {
 		if (canMove)
 			Move();
 	}
 
 	private void Move () {
-		float m_dragAmount = 0.01f;//IsOnGround() ? friction : airResistance;
+		float dragAmount = 0.01f;//IsOnGround() ? friction : airResistance;
 
-		if (currentVelocity.x > 0) {
-			currentAcceleration.x -= m_dragAmount;
-			if (currentVelocity.x - m_dragAmount < 0) {
-				currentVelocity.x = 0;
-				currentAcceleration.x = 0;
+		/*if (currentVelocity.x > 0) {
+			if (currentAcceleration.x - dragAmount > 0) {
+				currentAcceleration.x -= dragAmount;
+			} else {
+
 			}
-		}
+		} else if (currentVelocity.x < 0) {
+			if (currentAcceleration.x + dragAmount < 0) {
+				currentAcceleration.x += dragAmount;
+			}
+		}*/
+
+		currentVelocity.x *= 0.9f;
+		currentAcceleration *= 0.0f;
 
 		//gravity on y
 		if (!IsOnGround())
