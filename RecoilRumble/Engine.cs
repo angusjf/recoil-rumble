@@ -7,32 +7,36 @@ using Microsoft.Xna.Framework.Input;
 
 namespace RecoilRumble
 {
-	public class Engine : Game
+	public class Engine : Microsoft.Xna.Framework.Game
 	{
 		GraphicsDeviceManager graphics;
 		public SpriteBatch spriteBatch;
 
 		public static Engine Instance { get; private set; }
 
-		public List<Updatable> UpdateableGameObjects { get; private set; }
-		public List<Drawable> DrawableGameObjects { get; private set; }
-
-		public UiController Ui { get; private set; }
-		public InputController Input { get; private set; }
+		public UiController UiManager { get; private set; }
+		public InputController InputManager { get; private set; }
+		public GameManager GameManager { get; private set; }
 
 		public Engine ()
 		{
 			Instance = this;
-			UpdateableGameObjects = new List<Updatable>();
-			DrawableGameObjects = new List<Drawable>();
 			graphics = new GraphicsDeviceManager (this);
 			Content.RootDirectory = "Content";
+			Window.Title = "Recoil Rumble";
+			IsMouseVisible = false;
+			graphics.PreferredBackBufferWidth = 640 * 1;
+			graphics.PreferredBackBufferHeight = 480 * 1;
 		}
 
 		protected override void Initialize ()
 		{
-			Ui = new UiController ();
-			Input = new InputController ();
+			UiManager = new UiController ();
+			InputManager = new InputController ();
+			GameManager = new GameManager ();
+
+			UiManager.LoadMainMenu ();
+
 			base.Initialize ();
 		}
 
@@ -43,25 +47,43 @@ namespace RecoilRumble
 
 		protected override void Update (GameTime gameTime)
 		{
-			if (GamePad.GetState (PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState ().IsKeyDown (Keys.Escape)) Exit ();
-
-			foreach (Updatable obj in UpdateableGameObjects) {
-				obj.Update ();
+			if (GameManager.CurrentRound != null)
+			{
+				foreach (Updatable obj in GameManager.CurrentRound)
+				{
+					obj.Update ();
+				}
 			}
+
+			UiManager.Update ();
+			InputManager.Update ();
+			GameManager.Update ();
 
 			base.Update (gameTime);
 		}
 
 		protected override void Draw (GameTime gameTime)
 		{
-			graphics.GraphicsDevice.Clear (Color.CornflowerBlue);
+			graphics.GraphicsDevice.Clear (Color.Black);
 
+			spriteBatch.Begin (SpriteSortMode.FrontToBack, null, SamplerState.PointClamp, null, null, null, null);
 
-			spriteBatch.Begin ();
-			foreach (Drawable obj in DrawableGameObjects) {
-				if (obj.Visible)
-					spriteBatch.Draw (obj.Sprite, new Vector2(obj.X, obj.Y));
+			if (UiManager.CurrentMenu != null)
+			{
+				foreach (Drawable obj in UiManager.CurrentMenu)
+				{
+					obj.Draw (spriteBatch);
+				}
 			}
+
+			if (GameManager.CurrentRound != null)
+			{
+				foreach (Drawable obj in GameManager.CurrentRound)
+				{
+					obj.Draw (spriteBatch);
+				}
+			}
+
 			spriteBatch.End ();
 
 			base.Draw (gameTime);
@@ -71,6 +93,5 @@ namespace RecoilRumble
 		{
 			return Content.Load<Texture2D> (name);
 		}
-
 	}
 }

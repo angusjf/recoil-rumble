@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 
 namespace Ui {
-	public class MenuScene {
+	public class MenuScene : IEnumerable<Element> {
 
 		List<Element> elements;
 		Button currentButton;
@@ -70,6 +71,16 @@ namespace Ui {
 			if (currentButton != null) {
 				currentButton.Press();
 			}
+		}
+
+		public IEnumerator<Element> GetEnumerator ()
+		{
+			return ((IEnumerable<Element>)elements).GetEnumerator ();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
+			return ((IEnumerable<Element>)elements).GetEnumerator ();
 		}
 	}
 }

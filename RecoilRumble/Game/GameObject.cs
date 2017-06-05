@@ -23,6 +23,10 @@ namespace RecoilRumble
 			}
 		}
 
+		public int Scale { get { return 1; } }
+
+		public int Layer { get; private set; }
+
 		public Vector2 position;
 		public Texture2D Sprite { get; set; }
 		public GameObject Parent = null;
@@ -30,8 +34,6 @@ namespace RecoilRumble
 
 		public GameObject ()
 		{
-			Engine.Instance.UpdateableGameObjects.Add (this);
-			Engine.Instance.DrawableGameObjects.Add (this);
 		}
 
 		public GameObject (Vector2 position) : this ()
@@ -44,8 +46,15 @@ namespace RecoilRumble
 			this.Sprite	= sprite;
 		}
 
-		public void Update() {
+		public virtual void Update()
+		{
 			position += Vector2.UnitY;
 		}
+
+		public virtual void Draw (SpriteBatch spriteBatch)
+		{
+			spriteBatch.Draw (Sprite, position, null, null, null, 0, Vector2.One * Scale);
+		}
+
 	}
 }

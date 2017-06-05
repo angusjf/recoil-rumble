@@ -23,16 +23,21 @@ namespace Ui {
 			}
 		}
 
-		protected Vector2 position;
+		public float LayerDepth { get; protected set; }
+		public int Scale { get { return 2; } }
 		public Texture2D Sprite { get; set; }
-		public Drawable Parent = null;
-		public bool Visible { get; set; }
+		public abstract bool Visible { get; set; }
+
+		protected Vector2 position;
 
 		public Element (Vector2 position){
 			this.position = position;
-			Visible = false;
-			//Sprite = Engine.Instance.GetTexture ("Slice-2");
-			Engine.Instance.DrawableGameObjects.Add (this);
+		}
+
+		public virtual void Draw (SpriteBatch spriteBatch)
+		{
+			if (Visible)
+				spriteBatch.Draw (Sprite, position, scale: Vector2.One * Scale, layerDepth: LayerDepth);
 		}
 	}
 }

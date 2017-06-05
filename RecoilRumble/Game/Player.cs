@@ -11,9 +11,10 @@ namespace RecoilRumble
 			
 		}
 
-		public void Update ()
+		public override void Update ()
 		{
 			position += Vector2.UnitX;
+			base.Update ();
 		}
 	}
 }

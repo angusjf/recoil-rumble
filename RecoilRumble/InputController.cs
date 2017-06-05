@@ -19,7 +19,6 @@ namespace RecoilRumble
 
 		public InputController ()
 		{
-			Engine.Instance.UpdateableGameObjects.Add (this);
 			heldKeys = new Dictionary<Keys, bool> (usedKeys.Length);
 			hitKeys = new Dictionary<Keys, bool> (usedKeys.Length);
 		}
