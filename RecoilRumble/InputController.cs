@@ -37,6 +37,15 @@ namespace RecoilRumble
 			return heldKeys.ContainsKey (k) && heldKeys [k];
 		}
 
+		public bool GetKey (params Keys [] keys)
+		{
+			bool ret = true;
+			foreach (Keys k in keys) {
+				ret = ret && heldKeys.ContainsKey (k) && heldKeys [k];
+			}
+			return ret;
+		}
+
 		public bool GetKeyDown (Keys k)
 		{
 			return hitKeys.ContainsKey(k) && hitKeys[k];

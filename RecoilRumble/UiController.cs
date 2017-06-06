@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Ui;
 
 namespace RecoilRumble
@@ -12,6 +13,36 @@ namespace RecoilRumble
 		{
 		}
 
+		private void LoadMenu (MenuScene menu)
+		{
+			if (CurrentMenu != null) CurrentMenu.Hide ();
+			CurrentMenu = menu;
+			CurrentMenu.Show ();
+		}
+
+		private void HideMenu ()
+		{
+			CurrentMenu.Hide ();
+		}
+
+		public void Update ()
+		{
+			if (Engine.Instance.InputManager.GetKeyDown (Microsoft.Xna.Framework.Input.Keys.Down)) {
+				CurrentMenu.NextElement ();
+			}
+			if (Engine.Instance.InputManager.GetKeyDown (Microsoft.Xna.Framework.Input.Keys.Up)) {
+				CurrentMenu.PreviousElement ();
+			}
+			if (Engine.Instance.InputManager.GetKeyDown (Microsoft.Xna.Framework.Input.Keys.Enter)) {
+				CurrentMenu.Press ();
+			}
+		}
+
+		private void tempStartGame (int i)
+		{
+			Engine.Instance.GameManager.NewRound (i);
+		}
+
 		public void LoadMainMenu() {
 
 			MenuScene mainMenu = null, optionsMenu = null, creditsMenu = null, levelSelectMenu = null;
@@ -20,46 +51,41 @@ namespace RecoilRumble
 				new Image (
 					new Vector2 (200, 40), Engine.Instance.GetTexture ("Title-Image")
 				),
-				new Button (
+				new SimpleButton (
 					new Vector2 (280, 150), Engine.Instance.GetTexture ("Play-Text"), () => {
 						LoadMenu (levelSelectMenu);
 					}
 				),
-				new Button (
+				new SimpleButton (
 					new Vector2 (280, 200), Engine.Instance.GetTexture ("Options-Text"), () => {
 						LoadMenu (optionsMenu);
 					}
 				),
-				new Button (
+				new SimpleButton (
 					new Vector2 (280, 250), Engine.Instance.GetTexture ("Credits-Text"), () => {
 						LoadMenu (creditsMenu);
 					}
 				),
-				new Button (
+				new SimpleButton (
 					new Vector2 (280, 300), Engine.Instance.GetTexture ("Quit-Text"), () => { Engine.Instance.Exit (); }
 				)
 			);
 
 			optionsMenu = new MenuScene (
-				new Image (new Vector2 (280, 2), Engine.Instance.GetTexture ("Options-Image")),
-				new Button (
-					new Vector2 (280, -3), Engine.Instance.GetTexture ("Back-Text"), () => {
+				new Image (new Vector2 (200, 2), Engine.Instance.GetTexture ("Options-Image")),
+				new SimpleButton (
+					new Vector2 (280, 150), Engine.Instance.GetTexture ("Back-Text"), () => {
 						LoadMenu (mainMenu);
 					}
 				)
 			);
 
 			creditsMenu = new MenuScene (
-				new Image (new Vector2 (280, 2), Engine.Instance.GetTexture ("Credits-Image")),
-				new Image (new Vector2 (280, -0), Engine.Instance.GetTexture ("Findlang-Twitter-Image")),
-				new Image (new Vector2 (280, -1), Engine.Instance.GetTexture ("Rhys-Twitter-Image")),
-				new Button (
-					new Vector2 (280, -2), Engine.Instance.GetTexture ("Website-Text"), () => {
-						//OpenURL("http://findlang.github.io");
-					}
-				),
-				new Button (
-					new Vector2 (280, -3), Engine.Instance.GetTexture ("Back-Text"), () => {
+				new Image (new Vector2 (200, 40), Engine.Instance.GetTexture ("Credits-Image")),
+				new Image (new Vector2 (280, 150), Engine.Instance.GetTexture ("Findlang-Twitter-Image")),
+				new Image (new Vector2 (280, 180), Engine.Instance.GetTexture ("Rhys-Twitter-Image")),
+				new SimpleButton (
+					new Vector2 (280, 210), Engine.Instance.GetTexture ("Back-Text"), () => {
 						LoadMenu (mainMenu);
 					}
 				)
@@ -99,7 +125,7 @@ namespace RecoilRumble
 						HideMenu ();
 					}
 				),
-				new Button (
+				new SimpleButton(
 					new Vector2 (280, 400), Engine.Instance.GetTexture ("Back-Text"), () => {
 						LoadMenu (mainMenu);
 					}
@@ -109,34 +135,30 @@ namespace RecoilRumble
 			LoadMenu (mainMenu);
 		}
 
-		private void tempStartGame (int i)
+		private void AutoPositionElements (MenuScene menuScene)
 		{
-			Engine.Instance.GameManager.NewRound(i);
-		}
-
-		private void LoadMenu (MenuScene menu)
-		{
-			if (CurrentMenu != null) CurrentMenu.Hide ();
-			CurrentMenu = menu;
-			CurrentMenu.Show ();
-		}
-
-		private void HideMenu ()
-		{
-			CurrentMenu.Hide ();
-		}
-
-		public void Update ()
-		{
-			if (Engine.Instance.InputManager.GetKeyDown (Microsoft.Xna.Framework.Input.Keys.Down)) {
-				CurrentMenu.NextElement ();
-			}
-			if (Engine.Instance.InputManager.GetKeyDown (Microsoft.Xna.Framework.Input.Keys.Up)) {
-				CurrentMenu.PreviousElement ();
-			}
-			if (Engine.Instance.InputManager.GetKeyDown (Microsoft.Xna.Framework.Input.Keys.Enter)) {
-				CurrentMenu.Press ();
+			foreach (Element element in menuScene) {
 			}
 		}
+
+		/*
+				private Element [] GenerateSimpleMenu (Texture2D titleImage, MenuScene previousScene, params Tuple<Texture2D, Action> [] buttonActionTuples)
+				{
+					Element [] elements = new Element [2 + buttonActionTuples.Length];
+					elements [0] = new Image (Vector2.One, titleImage);
+					for (int i = 0; i < buttonActionTuples.Length; i++) {
+						elements [i + 1] = new Button (
+							Vector2.One,
+							buttonActionTuples [i].Item1,
+							defaultButtonNormal,
+							defualtButtonHighlighted,
+							defaultButtonPressed,
+							buttonActionTuples [i].Item2
+						);
+					}
+					elements [elements.Length - 1] = new Button (Vector2.Zero, Engine.Instance.GetTexture ("s"), defaultButtonNormal, defualtButtonHighlighted, defaultButtonPressed, () => { });
+					return elements;
+				}
+		*/
 	}
 }

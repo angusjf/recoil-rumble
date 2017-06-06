@@ -1,4 +1,5 @@
-﻿namespace RecoilRumble
+﻿using RecoilRumble.Game;
+namespace RecoilRumble
 {
 	public class GameManager : Updatable
 	{
@@ -11,7 +12,9 @@
 
 		public void Update ()
 		{
-
+			if (CurrentRound != null) {
+				
+			}
 		}
 
 		public void NewRound (int mapNumber)

@@ -12,7 +12,7 @@ namespace Ui {
 
 			Button lastButton = null;
 			foreach (var element in elements) {
-				if (element.GetType() == typeof(Button)) {
+				if (element is Button) {
 					if (currentButton == null) {
 						currentButton = (Button) element;
 					} else {
@@ -42,7 +42,7 @@ namespace Ui {
 
 		public void Show() {
 			foreach (var element in elements) {
-				element.Visible = true;
+				element.visible = true;
 			}
 			if (currentButton != null) {
 				currentButton.SetState(Button.ButtonState.Highlighted);
@@ -51,20 +51,24 @@ namespace Ui {
 
 		public void Hide() {
 			foreach (var element in elements) {
-				element.Visible = false;
+				element.visible = false;
 			}
 		}
 
 		public void NextElement() {
-			currentButton.SetState(Button.ButtonState.Normal);
-			currentButton = currentButton.next;
-			currentButton.SetState(Button.ButtonState.Highlighted);
+			if (currentButton != null) {
+				currentButton.SetState (Button.ButtonState.Normal);
+				currentButton = currentButton.next;
+				currentButton.SetState (Button.ButtonState.Highlighted);
+			}
 		}
 
 		public void PreviousElement() {
-			currentButton.SetState(Button.ButtonState.Normal);
-			currentButton = currentButton.previous;
-			currentButton.SetState(Button.ButtonState.Highlighted);
+			if (currentButton != null) {
+				currentButton.SetState (Button.ButtonState.Normal);
+				currentButton = currentButton.previous;
+				currentButton.SetState (Button.ButtonState.Highlighted);
+			}
 		}
 
 		public void Press() {

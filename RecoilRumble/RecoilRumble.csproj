@@ -53,6 +53,11 @@
     <Compile Include="Game\GameObject.cs" />
     <Compile Include="Game\GameRound.cs" />
     <Compile Include="Game\Player.cs" />
+    <Compile Include="AudioManager.cs" />
+    <Compile Include="Ui\SimpleButton.cs" />
+    <Compile Include="Game\PlayerSpriteSet.cs" />
+    <Compile Include="Game\PhysicsGameObject.cs" />
+    <Compile Include="Game\AnimationController.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />

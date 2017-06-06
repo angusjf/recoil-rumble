@@ -17,6 +17,7 @@ namespace RecoilRumble
 		public UiController UiManager { get; private set; }
 		public InputController InputManager { get; private set; }
 		public GameManager GameManager { get; private set; }
+		public AudioManager AudioManager { get; private set; }
 
 		public Engine ()
 		{
@@ -34,6 +35,7 @@ namespace RecoilRumble
 			UiManager = new UiController ();
 			InputManager = new InputController ();
 			GameManager = new GameManager ();
+			AudioManager = new AudioManager ();
 
 			UiManager.LoadMainMenu ();
 
