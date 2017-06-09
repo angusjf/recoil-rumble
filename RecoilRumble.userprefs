@@ -1,0 +1,23 @@
+﻿<Properties StartupConfiguration="{6CF03AEB-F42B-4902-B958-214472C6D455}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="RecoilRumble/Program.cs">
+    <Files>
+      <File FileName="RecoilRumble/Game/Player.cs" Line="41" Column="3" />
+      <File FileName="RecoilRumble/Game/PhysicsGameObject.cs" Line="13" Column="1" />
+      <File FileName="RecoilRumble/InputController.cs" Line="32" Column="5" />
+      <File FileName="RecoilRumble/Game/GameObject.cs" Line="22" Column="21" />
+      <File FileName="RecoilRumble/Game/GameRound.cs" Line="30" Column="29" />
+      <File FileName="RecoilRumble/Game/Map.cs" Line="178" Column="30" />
+      <File FileName="RecoilRumble/GameManager.cs" Line="22" Column="56" />
+      <File FileName="RecoilRumble/Ui/Button.cs" Line="39" Column="34" />
+      <File FileName="RecoilRumble/Content/maps.txt" Line="1" Column="1" />
+      <File FileName="RecoilRumble/Program.cs" Line="1" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
+  <MonoDevelop.Ide.ItemProperties.RecoilRumble PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MultiItemStartupConfigurations />
+</Properties>

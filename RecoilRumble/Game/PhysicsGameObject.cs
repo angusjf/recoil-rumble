@@ -9,10 +9,12 @@ namespace RecoilRumble.Game
 		protected Vector2 velocity;
 		protected Vector2 acceleration;
 		protected bool canMove;
+		private const float gravity = 0.2f;
 
 		public PhysicsGameObject (Vector2 position, Texture2D texture) : base(position, texture)
 		{
-			
+			acceleration = Vector2.UnitY * gravity;
+			velocity = Vector2.Zero;
 		}
 
 		public override void Update ()

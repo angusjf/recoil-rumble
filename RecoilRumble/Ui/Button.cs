@@ -28,6 +28,14 @@ namespace Ui {
 		{
 			SetState (ButtonState.Pressed);
 			action ();
+			RealPress ();
+		}
+
+		IEnumerator RealPress ()
+		{
+			for (int i = 0; i < 100; i++) {
+				yield return null;
+			}
 			SetState (ButtonState.Normal);
 		}
 

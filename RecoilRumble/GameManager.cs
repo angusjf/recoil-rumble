@@ -19,7 +19,7 @@ namespace RecoilRumble
 
 		public void NewRound (int mapNumber)
 		{
-			CurrentRound = new GameRound ();
+			CurrentRound = new GameRound (Map.LoadMap(mapNumber));
 		}
 	}
 }

@@ -9,11 +9,16 @@ namespace RecoilRumble.Game
 	{
 		private List<GameObject> gameObjects;
 
-		Player player1, player2;
+		private Map map;
+		Player player1;//, player2;
 
-		public GameRound ()
+		private List<Vector2> respawnPositions;
+
+		public GameRound (Map map)
 		{
 			gameObjects = new List<GameObject> ();
+			this.map = map;
+			gameObjects.AddRange (map);
 			player1 = new Player (
 				Vector2.Zero,
 				Microsoft.Xna.Framework.Input.Keys.A,

@@ -9,7 +9,22 @@ namespace RecoilRumble.Game
 		public Vector2 position;
 		private const int scale = 1;
 		protected Texture2D sprite;
-		public bool visible;
+		public bool visible = true;
+		public bool FlipX {
+			set {
+				if (value == ((spriteEffects | SpriteEffects.FlipVertically) == SpriteEffects.None)) {
+					spriteEffects = spriteEffects | SpriteEffects.FlipHorizontally;
+				}
+			}
+		}
+		public bool FlipY {
+			set {
+				if (value == ((spriteEffects | SpriteEffects.FlipVertically) == SpriteEffects.None)) {
+					spriteEffects |= SpriteEffects.FlipVertically;
+				}
+			}
+		}
+		private SpriteEffects spriteEffects;
 
 		protected GameObject (Vector2 position, Texture2D sprite)
 		{
@@ -25,7 +40,12 @@ namespace RecoilRumble.Game
 		public virtual void Draw (SpriteBatch spriteBatch)
 		{
 			if (visible) {
-				spriteBatch.Draw (sprite, position, null, null, null, 0, Vector2.One * scale);
+				spriteBatch.Draw (
+					sprite,
+					position,
+					scale: Vector2.One * scale,
+					effects: spriteEffects
+				);
 			}
 		}
 	}
