@@ -9,7 +9,7 @@ namespace RecoilRumble.Game
 	public class Map : IEnumerable<GameObject>
 	{
 		public byte [,] data;
-		public List<Vector2> respawnPositions;
+		private List<Vector2> respawnPositions;
 		private List<GameObject> gameObjects;
 		private Texture2D [] blockSprites;
 
@@ -18,14 +18,8 @@ namespace RecoilRumble.Game
 			this.data = data;
 			respawnPositions = new List<Vector2> ();
 			blockSprites = new Texture2D [8];
-			blockSprites [0] = Engine.Instance.GetTexture ("Menu-Text");
-			blockSprites [1] = Engine.Instance.GetTexture ("Menu-Text");
-			blockSprites [2] = Engine.Instance.GetTexture ("Menu-Text");
-			blockSprites [3] = Engine.Instance.GetTexture ("Menu-Text");
-			blockSprites [4] = Engine.Instance.GetTexture ("Menu-Text");
-			blockSprites [5] = Engine.Instance.GetTexture ("Menu-Text");
-			blockSprites [6] = Engine.Instance.GetTexture ("Menu-Text");
-			blockSprites [7] = Engine.Instance.GetTexture ("Menu-Text");
+			for (int i = 0; i < blockSprites.Length; i++)
+				blockSprites [i] = Engine.Instance.GetTexture ("block_sprites-" + i);
 		}
 
 		public static Map LoadMap (int num)
@@ -174,15 +168,24 @@ namespace RecoilRumble.Game
 				break;
 			}
 			Block newBlock = new Block (GetLevelPos (xPos, yPos), blockSprites [blockSprite]);
-			newBlock.FlipX = flippedX;
-			newBlock.FlipY = flippedY;
+			newBlock.FlipX = !flippedX;
+			newBlock.FlipY = !flippedY;
 			gameObjects.Add (newBlock);
 		}
 
 		private Vector2 GetLevelPos (int x, int y)
 		{
 			// converts a map pos to world space
-			return new Vector2 (x * 20f, y * 20f);// + new Vector2 (-9.75f, 7.25f);;
+			return new Vector2 (x * 16f, y * 16f);// + new Vector2 (-9.75f, 7.25f);;
+		}
+
+
+		int e = 0;
+		public Vector2 NextRespawnPosition ()
+		{
+			//todo better implementation
+			e++;
+			return respawnPositions[e % respawnPositions.Count];
 		}
 	}
 }

@@ -12,15 +12,13 @@ namespace RecoilRumble.Game
 		private Map map;
 		Player player1;//, player2;
 
-		private List<Vector2> respawnPositions;
-
 		public GameRound (Map map)
 		{
 			gameObjects = new List<GameObject> ();
 			this.map = map;
 			gameObjects.AddRange (map);
 			player1 = new Player (
-				Vector2.Zero,
+				map.NextRespawnPosition(),
 				Microsoft.Xna.Framework.Input.Keys.A,
 				Microsoft.Xna.Framework.Input.Keys.D,
 				Microsoft.Xna.Framework.Input.Keys.Space,
